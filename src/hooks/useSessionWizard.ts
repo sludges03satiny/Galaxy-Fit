@@ -272,6 +272,7 @@ export function useSessionWizard(profile: AthleteProfile) {
     if (!template) return null
 
     const now = new Date()
+    const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
     const durationMinutes = startedAt
       ? Math.round((now.getTime() - new Date(startedAt).getTime()) / 60000)
       : state.timeTier
@@ -280,7 +281,7 @@ export function useSessionWizard(profile: AthleteProfile) {
       liftId: ls.liftId,
       liftName: ls.liftName,
       sessionId: sessionId.current,
-      date: now.toISOString().split('T')[0],
+      date: localDate,
       sets: ls.sets.map(s => ({
         setNumber: s.setNumber,
         weight_kg: s.weight_kg,
@@ -294,7 +295,7 @@ export function useSessionWizard(profile: AthleteProfile) {
     const skillEntries: SkillLogEntry[] = skillStates.map(ss => ({
       nodeId: ss.nodeId,
       sessionId: sessionId.current,
-      date: now.toISOString().split('T')[0],
+      date: localDate,
       sets: ss.sets.map(s => ({
         setNumber: s.setNumber,
         hold_seconds: ss.isTimedHold ? s.hold_seconds : undefined,
@@ -315,7 +316,7 @@ export function useSessionWizard(profile: AthleteProfile) {
 
     const session: Session = {
       id: sessionId.current,
-      date: now.toISOString().split('T')[0],
+      date: localDate,
       dayType: template.dayType,
       blockNumber: profile.blockPosition.blockNumber,
       weekInBlock: profile.blockPosition.weekInBlock,

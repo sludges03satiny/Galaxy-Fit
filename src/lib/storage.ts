@@ -51,6 +51,7 @@ export function saveSession(session: Session): void {
     sessions.push(session)
   }
   write(KEYS.SESSIONS, sessions)
+  window.dispatchEvent(new Event('galaxyfit:session-saved'))
 }
 
 export function getSessions(): Session[] {
@@ -60,6 +61,7 @@ export function getSessions(): Session[] {
 export function deleteSession(sessionId: string): void {
   const sessions = getSessions().filter(s => s.id !== sessionId)
   write(KEYS.SESSIONS, sessions)
+  window.dispatchEvent(new Event('galaxyfit:session-saved'))
 }
 
 export function getSessionsByDateRange(from: string, to: string): Session[] {
