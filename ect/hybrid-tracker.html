@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Hybrid OS — Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a08;
+  --bg2: #111110;
+  --bg3: #1a1a17;
+  --bg4: #222220;
+  --line: #2a2a25;
+  --line2: #3a3a33;
+  --text: #e8e6dc;
+  --text2: #9e9b8e;
+  --text3: #5a5850;
+  --accent: #c8f050;
+  --accent2: #f0c828;
+  --accent3: #f05050;
+  --accent4: #50c8f0;
+  --accent-dim: rgba(200,240,80,0.1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:999;
+}
+
+/* NAV */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,8,0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  height: 52px;
+  padding: 0 1rem;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav::-webkit-scrollbar { display:none; }
+
+.nav-brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  padding-right: 1rem;
+  border-right: 1px solid var(--line);
+  margin-right: 0.5rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nav-tab {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  padding: 0 0.9rem;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  background: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.2s;
+  text-transform: uppercase;
+  border-right: 1px solid var(--line);
+}
+.nav-tab:hover { color: var(--text2); }
+.nav-tab.active { color: var(--accent); }
+
+/* VIEWS */
+.view { display: none; padding: 1.5rem 1rem 6rem; max-width: 700px; margin: 0 auto; }
+.view.active { display: block; }
+
+/* DASHBOARD */
+.today-card {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--accent);
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.today-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.today-day {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.today-sub {
+  font-size: 0.8rem;
+  color: var(--text2);
+  margin-top: 0.3rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--line2);
+  background: none;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn-primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 500; }
+.btn-primary:hover { background: #d4f560; color: var(--bg); }
+.btn-sm { padding: 0.4rem 0.8rem; font-size: 0.6rem; }
+.btn-danger { border-color: var(--accent3); color: var(--accent3); }
+.btn-danger:hover { background: var(--accent3); color: var(--bg); }
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin-bottom: 1rem;
+}
+
+.kpi-box {
+  background: var(--bg2);
+  padding: 1rem 0.8rem;
+  text-align: center;
+}
+
+.kpi-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  display: block;
+  line-height: 1;
+}
+
+.kpi-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.week-checks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin-bottom: 1rem;
+}
+
+.week-check {
+  background: var(--bg2);
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.8rem;
+  color: var(--text2);
+}
+
+.check-dot {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--line2);
+  flex-shrink: 0;
+}
+.check-dot.done { background: var(--accent); border-color: var(--accent); }
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  margin: 1.5rem 0 0.8rem;
+}
+
+.session-log-item {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line2);
+  padding: 0.8rem 1rem;
+  margin-bottom: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.session-log-item.day-a { border-left-color: var(--accent); }
+.session-log-item.day-b { border-left-color: var(--accent2); }
+.session-log-item.day-c { border-left-color: var(--accent4); }
+.session-log-item.day-z { border-left-color: var(--accent3); }
+
+.log-left { flex: 1; }
+.log-day { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.06em; }
+.log-date { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text3); }
+.log-summary { font-size: 0.78rem; color: var(--text2); margin-top: 0.2rem; }
+
+/* LOG SESSION */
+.form-group { margin-bottom: 1.2rem; }
+
+.form-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.form-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--line2);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  padding: 0.7rem 0.9rem;
+  outline: none;
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+.form-input:focus { border-color: var(--accent); }
+
+select.form-input { cursor: pointer; }
+
+.day-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin-bottom: 1.2rem;
+}
+
+.day-btn {
+  background: var(--bg3);
+  border: none;
+  color: var(--text3);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.08em;
+  padding: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.day-btn:hover { background: var(--bg4); color: var(--text2); }
+.day-btn.selected-a { background: rgba(200,240,80,0.12); color: var(--accent); }
+.day-btn.selected-b { background: rgba(240,200,40,0.12); color: var(--accent2); }
+.day-btn.selected-c { background: rgba(80,200,240,0.12); color: var(--accent4); }
+.day-btn.selected-z { background: rgba(240,80,80,0.12); color: var(--accent3); }
+
+.exercise-entry {
+  background: var(--bg3);
+  border: 1px solid var(--line);
+  padding: 0.8rem;
+  margin-bottom: 1px;
+}
+
+.exercise-entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.exercise-name-display {
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.sets-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.set-input-wrap { display: flex; flex-direction: column; gap: 0.2rem; }
+.set-input-label { font-family: 'DM Mono', monospace; font-size: 0.55rem; color: var(--text3); letter-spacing: 0.08em; }
+.set-input {
+  background: var(--bg4);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.5rem;
+  outline: none;
+  width: 100%;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+.set-input:focus { border-color: var(--accent); }
+
+.progression-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.6rem;
+  margin-top: 0.5rem;
+}
+.flag-up { background: rgba(200,240,80,0.1); color: var(--accent); border: 1px solid rgba(200,240,80,0.3); }
+.flag-hold { background: rgba(240,200,40,0.1); color: var(--accent2); border: 1px solid rgba(240,200,40,0.3); }
+
+/* SKILLS */
+.skill-block {
+  border: 1px solid var(--line);
+  margin-bottom: 1px;
+  overflow: hidden;
+}
+
+.skill-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  background: var(--bg2);
+  gap: 1rem;
+  cursor: pointer;
+}
+
+.skill-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+.skill-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+  flex: 1;
+}
+
+.skill-level-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.skill-steps { display: none; }
+.skill-steps.open { display: block; }
+
+.skill-step {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--line);
+  transition: background 0.15s;
+}
+
+.skill-step-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: var(--line2);
+  padding: 0.7rem 1rem;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--line);
+}
+
+.skill-step.current .skill-step-num { color: var(--accent2); }
+.skill-step.completed .skill-step-num { color: var(--accent); }
+.skill-step.locked .skill-step-num { color: var(--line); }
+
+.skill-step-content { flex: 1; padding: 0.7rem 1rem; }
+.skill-step-title { font-size: 0.85rem; color: var(--text); font-weight: 500; }
+.skill-step.locked .skill-step-title { color: var(--text3); }
+.skill-step-detail { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text3); margin-top: 0.2rem; }
+.skill-step-unlock { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--accent); margin-top: 0.3rem; }
+
+.skill-step-right {
+  padding: 0.7rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  border-left: 1px solid var(--line);
+  min-width: 70px;
+}
+
+.session-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text3);
+  text-align: center;
+}
+
+.session-dots { display: flex; gap: 3px; }
+.sdot { width: 6px; height: 6px; background: var(--line); }
+.sdot.filled { background: var(--accent); }
+
+/* BENCHMARKS */
+.bench-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin-bottom: 1.5rem;
+}
+
+.bench-item {
+  background: var(--bg2);
+  padding: 1rem;
+}
+
+.bench-name { font-size: 0.78rem; color: var(--text2); margin-bottom: 0.5rem; }
+
+.bench-current {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  color: var(--text);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.bench-unit { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--text3); }
+
+.bench-history {
+  display: flex;
+  gap: 3px;
+  margin-top: 0.5rem;
+  align-items: flex-end;
+  height: 24px;
+}
+
+.bench-bar {
+  flex: 1;
+  background: var(--line2);
+  min-height: 3px;
+  position: relative;
+}
+.bench-bar.latest { background: var(--accent); }
+
+.bench-input-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  margin-top: 0.6rem;
+}
+
+/* MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 200;
+  align-items: flex-end;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-bottom: none;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideup 0.25s ease;
+}
+
+@keyframes slideup {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text3);
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--accent);
+  color: var(--bg);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  padding: 0.6rem 1.2rem;
+  opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 500;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* REFERENCE */
+.ref-day {
+  border: 1px solid var(--line);
+  margin-bottom: 1px;
+  overflow: hidden;
+}
+
+.ref-day-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  background: var(--bg3);
+  cursor: pointer;
+}
+
+.ref-day-letter {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+.ref-day-letter.a { color: var(--accent); }
+.ref-day-letter.b { color: var(--accent2); }
+.ref-day-letter.c { color: var(--accent4); }
+.ref-day-letter.z { color: var(--accent3); }
+
+.ref-day-info { flex: 1; }
+.ref-day-name { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; color: var(--text2); }
+.ref-day-focus { font-size: 0.78rem; color: var(--text3); margin-top: 0.1rem; }
+
+.ref-day-body { display: none; padding: 0; }
+.ref-day-body.open { display: block; }
+
+.ref-section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-transform: uppercase;
+  padding: 0.4rem 1rem;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}
+
+.ref-exercise {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-top: 1px solid var(--line);
+  align-items: center;
+}
+
+.ref-ex-name { font-size: 0.82rem; color: var(--text); }
+.ref-ex-sets { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--accent2); }
+.ref-ex-note { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text3); text-align: right; }
+
+/* AUTOREGULATION banner */
+.auto-banner {
+  border: 1px solid var(--line);
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.auto-dot { width: 10px; height: 10px; flex-shrink: 0; border-radius: 50%; }
+.auto-green { background: var(--accent); border-color: var(--accent); }
+.auto-yellow { background: var(--accent2); border-color: var(--accent2); }
+.auto-red { background: var(--accent3); border-color: var(--accent3); }
+.auto-text { font-size: 0.8rem; color: var(--text2); }
+.auto-rule { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text3); margin-top: 0.2rem; }
+
+/* BOTTOM NAV MOBILE */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(10,10,8,0.97);
+  border-top: 1px solid var(--line);
+  display: flex;
+  z-index: 100;
+  height: 56px;
+}
+
+.bottom-nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text3);
+  transition: color 0.15s;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.bottom-nav-btn svg { width: 18px; height: 18px; }
+.bottom-nav-btn.active { color: var(--accent); }
+
+/* STREAK */
+.streak-bar {
+  display: flex;
+  gap: 3px;
+  margin: 0.5rem 0 1rem;
+}
+.streak-day {
+  flex: 1;
+  height: 28px;
+  background: var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.5rem;
+  color: var(--text3);
+  letter-spacing: 0.04em;
+}
+.streak-day.done { background: var(--accent-dim); border: 1px solid rgba(200,240,80,0.3); color: var(--accent); }
+.streak-day.today { border: 1px solid var(--accent2); color: var(--accent2); }
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--line); margin: 1.2rem 0; }
+
+/* empty state */
+.empty { text-align: center; padding: 2.5rem 1rem; color: var(--text3); font-size: 0.82rem; line-height: 1.8; }
+.empty-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+
+textarea.form-input { resize: vertical; min-height: 70px; }
+
+.tag {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  padding: 0.15em 0.5em;
+  border: 1px solid var(--line2);
+  color: var(--text3);
+  margin: 0.15rem;
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV (hidden on mobile, shown desktop) -->
+<nav class="nav" id="topNav">
+  <span class="nav-brand">HYBRID OS</span>
+  <button class="nav-tab active" onclick="showView('dashboard')">Dashboard</button>
+  <button class="nav-tab" onclick="showView('log')">Log Session</button>
+  <button class="nav-tab" onclick="showView('skills')">Skills</button>
+  <button class="nav-tab" onclick="showView('benchmarks')">Benchmarks</button>
+  <button class="nav-tab" onclick="showView('reference')">Reference</button>
+</nav>
+
+<!-- DASHBOARD -->
+<div class="view active" id="view-dashboard">
+
+  <div id="autoReg" class="auto-banner" style="margin-top:1rem;">
+    <div class="auto-dot auto-green" id="autoDot"></div>
+    <div>
+      <div class="auto-text" id="autoText">Green light — train as programmed.</div>
+      <div class="auto-rule" id="autoRule">Adjust sleep & stress below to get today's recommendation.</div>
+    </div>
+  </div>
+
+  <!-- sleep/stress quick inputs -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:1rem;">
+    <div style="background:var(--bg2);padding:0.8rem;">
+      <div class="form-label">Sleep (hrs)</div>
+      <input type="number" class="form-input" id="sleepInput" min="3" max="12" step="0.5" placeholder="7.5" oninput="updateAutoReg()">
+    </div>
+    <div style="background:var(--bg2);padding:0.8rem;">
+      <div class="form-label">Stress (1–10)</div>
+      <input type="number" class="form-input" id="stressInput" min="1" max="10" placeholder="5" oninput="updateAutoReg()">
+    </div>
+  </div>
+
+  <div class="today-card">
+    <div class="today-label">Next Session</div>
+    <div class="today-day" id="nextDay">—</div>
+    <div class="today-sub" id="nextDayFocus">Log your first session to begin the sequence.</div>
+    <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="showView('log');preselectNextDay()">Log This Session</button>
+      <button class="btn btn-sm" onclick="showView('reference')">View Program</button>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-box">
+      <span class="kpi-val" id="kpiSessions">0</span>
+      <span class="kpi-label">Sessions<br>This Week</span>
+    </div>
+    <div class="kpi-box">
+      <span class="kpi-val" id="kpiStreak">0</span>
+      <span class="kpi-label">Week<br>Streak</span>
+    </div>
+    <div class="kpi-box">
+      <span class="kpi-val" id="kpiTotal">0</span>
+      <span class="kpi-label">Total<br>Sessions</span>
+    </div>
+    <div class="kpi-box">
+      <span class="kpi-val" id="kpiBlock">1</span>
+      <span class="kpi-label">Current<br>Block</span>
+    </div>
+  </div>
+
+  <!-- Week streak bar -->
+  <div class="form-label" style="margin-bottom:0.4rem;">This Week</div>
+  <div class="streak-bar" id="streakBar"></div>
+
+  <!-- Weekly KPI checks -->
+  <div class="week-checks" id="weekChecks">
+    <div class="week-check"><div class="check-dot" id="chk-strength"></div>Strength progressed</div>
+    <div class="week-check"><div class="check-dot" id="chk-skill"></div>Skill improved</div>
+    <div class="week-check"><div class="check-dot" id="chk-vo2"></div>VO₂max stimulus</div>
+    <div class="week-check"><div class="check-dot" id="chk-mobility"></div>5+ mobility sessions</div>
+  </div>
+
+  <div class="section-title">Recent Sessions</div>
+  <div id="recentSessions"></div>
+
+</div>
+
+<!-- LOG SESSION -->
+<div class="view" id="view-log">
+  <div style="margin-top:1rem;">
+    <div class="form-label">Select Day Type</div>
+    <div class="day-selector">
+      <button class="day-btn" id="btn-A" onclick="selectDay('A')">A</button>
+      <button class="day-btn" id="btn-B" onclick="selectDay('B')">B</button>
+      <button class="day-btn" id="btn-C" onclick="selectDay('C')">C</button>
+      <button class="day-btn" id="btn-Z" onclick="selectDay('Z')">Z</button>
+    </div>
+
+    <div id="dayDescription" style="font-size:0.78rem;color:var(--text2);margin-bottom:1rem;padding:0.7rem;background:var(--bg3);border:1px solid var(--line);display:none;"></div>
+
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input type="date" class="form-input" id="sessionDate">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Duration (minutes)</label>
+      <input type="number" class="form-input" id="sessionDuration" placeholder="45">
+    </div>
+
+    <!-- EXERCISES -->
+    <div id="exerciseSection" style="display:none;">
+      <div class="section-title" style="font-size:1rem;margin-bottom:0.6rem;">Exercises</div>
+      <div id="exerciseList"></div>
+    </div>
+
+    <!-- SKILL -->
+    <div id="skillSection" style="display:none;margin-top:1rem;">
+      <div class="section-title" style="font-size:1rem;margin-bottom:0.6rem;">Skill Work</div>
+      <div id="skillLogList"></div>
+    </div>
+
+    <!-- CONDITIONING -->
+    <div id="condSection" style="display:none;margin-top:1rem;">
+      <div class="section-title" style="font-size:1rem;margin-bottom:0.6rem;">Conditioning</div>
+      <div class="form-group">
+        <label class="form-label">Type</label>
+        <select class="form-input" id="condType">
+          <option value="">— none —</option>
+          <option value="intervals">HIIT Intervals</option>
+          <option value="zone2">Zone 2 (bike/run/hike)</option>
+          <option value="hillsprints">Hill Sprints</option>
+          <option value="tempo">Tempo Run</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Details (sets/time/distance)</label>
+        <input type="text" class="form-input" id="condDetails" placeholder="e.g. 6×1 min / 1 min rest, avg HR 158">
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-top:1rem;">
+      <label class="form-label">Session Notes</label>
+      <textarea class="form-input" id="sessionNotes" placeholder="How did it feel? Anything to flag?"></textarea>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;" onclick="saveSession()">Save Session</button>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<div class="view" id="view-skills">
+  <div style="margin-top:1rem;margin-bottom:1rem;font-size:0.82rem;color:var(--text2);">
+    Track your progression through each skill. Tap a skill to expand. Sessions at current level are tracked — unlock the next when you hit the gate 3 times.
+  </div>
+  <div id="skillsContainer"></div>
+</div>
+
+<!-- BENCHMARKS -->
+<div class="view" id="view-benchmarks">
+  <div style="margin-top:1rem;margin-bottom:1rem;font-size:0.82rem;color:var(--text2);">
+    Log your monthly benchmark tests here. Run these on deload week (Week 5 and 10 of each block).
+  </div>
+
+  <div class="bench-grid" id="benchGrid"></div>
+
+  <button class="btn btn-primary" style="width:100%;margin-bottom:1.5rem;" onclick="openBenchModal()">Log Benchmark Test</button>
+
+  <div class="section-title">History</div>
+  <div id="benchHistory"></div>
+</div>
+
+<!-- REFERENCE -->
+<div class="view" id="view-reference">
+  <div style="margin-top:1rem;margin-bottom:1rem;font-size:0.78rem;color:var(--text2);">
+    Your complete A/B/C program. Tap a day to expand. RPE targets are for current phase — adjust via autoregulation rules.
+  </div>
+
+  <div class="ref-day">
+    <div class="ref-day-header" onclick="toggleRef('a')">
+      <div class="ref-day-letter a">A</div>
+      <div class="ref-day-info">
+        <div class="ref-day-name">LOWER BODY</div>
+        <div class="ref-day-focus">Squat pattern · Handstand · Hip hinge</div>
+      </div>
+      <span style="color:var(--text3);font-size:0.8rem;">▼</span>
+    </div>
+    <div class="ref-day-body" id="ref-a">
+      <div class="ref-section-label">Warm-up (8 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Hip circles + leg swing</span><span class="ref-ex-sets">1×10/side</span><span class="ref-ex-note">Dynamic</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Goblet squat hold</span><span class="ref-ex-sets">2×30 sec</span><span class="ref-ex-note">Deep position</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Couch stretch</span><span class="ref-ex-sets">1×60 sec/side</span><span class="ref-ex-note">Daily mobility</span></div>
+      <div class="ref-section-label">Skill — Handstand (8 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Wall handstand hold</span><span class="ref-ex-sets">4×30–60 sec</span><span class="ref-ex-note">Per current level</span></div>
+      <div class="ref-section-label">Strength (30 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Back Squat</span><span class="ref-ex-sets">4×5–8</span><span class="ref-ex-note">RPE 6–7</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Romanian Deadlift</span><span class="ref-ex-sets">3×8</span><span class="ref-ex-note">3 sec eccentric</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Bulgarian Split Squat</span><span class="ref-ex-sets">3×8/side</span><span class="ref-ex-note">BW or light DB</span></div>
+      <div class="ref-section-label">Mobility (5 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Jefferson curl</span><span class="ref-ex-sets">2×8</span><span class="ref-ex-note">Slow, BW</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Pike stretch hold</span><span class="ref-ex-sets">1×90 sec</span><span class="ref-ex-note">Measure to floor</span></div>
+    </div>
+  </div>
+
+  <div class="ref-day">
+    <div class="ref-day-header" onclick="toggleRef('b')">
+      <div class="ref-day-letter b">B</div>
+      <div class="ref-day-info">
+        <div class="ref-day-name">UPPER PUSH</div>
+        <div class="ref-day-focus">Press · L-sit · Back lever · HIIT</div>
+      </div>
+      <span style="color:var(--text3);font-size:0.8rem;">▼</span>
+    </div>
+    <div class="ref-day-body" id="ref-b">
+      <div class="ref-section-label">Warm-up (8 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Band pull-apart + shoulder circles</span><span class="ref-ex-sets">2×15</span><span class="ref-ex-note">Shoulder prep</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Dead hang</span><span class="ref-ex-sets">2×30 sec</span><span class="ref-ex-note">Passive</span></div>
+      <div class="ref-section-label">Skill (10 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">L-sit hold (tuck → full)</span><span class="ref-ex-sets">5×15 sec</span><span class="ref-ex-note">Per current level</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Skin the cat / Back lever</span><span class="ref-ex-sets">3×4 reps</span><span class="ref-ex-note">Per current level</span></div>
+      <div class="ref-section-label">Strength (28 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Barbell Bench Press</span><span class="ref-ex-sets">4×5–8</span><span class="ref-ex-note">RPE 6–7</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Overhead Press</span><span class="ref-ex-sets">3×6</span><span class="ref-ex-note">Full OH range</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Weighted Dips</span><span class="ref-ex-sets">3×6–8</span><span class="ref-ex-note">Control descent</span></div>
+      <div class="ref-section-label">Conditioning (10 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">1 min effort / 1 min rest</span><span class="ref-ex-sets">6 rounds</span><span class="ref-ex-note">Zone 4 target</span></div>
+    </div>
+  </div>
+
+  <div class="ref-day">
+    <div class="ref-day-header" onclick="toggleRef('c')">
+      <div class="ref-day-letter c">C</div>
+      <div class="ref-day-info">
+        <div class="ref-day-name">UPPER PULL</div>
+        <div class="ref-day-focus">Front lever first · Pull strength · No conditioning</div>
+      </div>
+      <span style="color:var(--text3);font-size:0.8rem;">▼</span>
+    </div>
+    <div class="ref-day-body" id="ref-c">
+      <div class="ref-section-label">Warm-up (8 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Cat-cow + thoracic rotation</span><span class="ref-ex-sets">1×10/side</span><span class="ref-ex-note">Spine prep</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Dead hang</span><span class="ref-ex-sets">2×45 sec</span><span class="ref-ex-note">Shoulder warm-up</span></div>
+      <div class="ref-section-label">Skill — Front Lever FIRST (10 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Front lever hold (tuck → full)</span><span class="ref-ex-sets">5×8–12 sec</span><span class="ref-ex-note">Fresh CNS only</span></div>
+      <div class="ref-section-label">Strength (30 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Weighted Pull-up</span><span class="ref-ex-sets">4×5–8</span><span class="ref-ex-note">RPE 6–7</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Barbell Row (Pendlay)</span><span class="ref-ex-sets">3×8</span><span class="ref-ex-note">Horizontal pull</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Conventional Deadlift</span><span class="ref-ex-sets">3×5</span><span class="ref-ex-note">RPE 6–7</span></div>
+      <div class="ref-exercise"><span class="ref-ex-name">Face Pull</span><span class="ref-ex-sets">2×15</span><span class="ref-ex-note">Shoulder health</span></div>
+      <div class="ref-section-label">Mobility (5 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Jefferson curl</span><span class="ref-ex-sets">2×8</span><span class="ref-ex-note">Decompression</span></div>
+    </div>
+  </div>
+
+  <div class="ref-day">
+    <div class="ref-day-header" onclick="toggleRef('z')">
+      <div class="ref-day-letter z">Z</div>
+      <div class="ref-day-info">
+        <div class="ref-day-name">ZONE 2 / OUTDOOR</div>
+        <div class="ref-day-focus">Mountain bike · Hike · Easy run · Optional skill</div>
+      </div>
+      <span style="color:var(--text3);font-size:0.8rem;">▼</span>
+    </div>
+    <div class="ref-day-body" id="ref-z">
+      <div class="ref-section-label">Zone 2 (60–90 min)</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Mountain bike / incline hike / easy run</span><span class="ref-ex-sets">60–90 min</span><span class="ref-ex-note">HR 118–138 bpm</span></div>
+      <div class="ref-section-label">Optional — if near bars</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Handstand practice (casual)</span><span class="ref-ex-sets">3–4 attempts</span><span class="ref-ex-note">Playful, no pressure</span></div>
+      <div class="ref-section-label">Rules</div>
+      <div class="ref-exercise"><span class="ref-ex-name">Any unplanned 45+ min activity</span><span class="ref-ex-sets">= Z day</span><span class="ref-ex-note">Log it, continue sequence</span></div>
+    </div>
+  </div>
+
+  <!-- Autoregulation reference -->
+  <div class="section-title" style="margin-top:1.5rem;">Autoregulation Rules</div>
+  <div style="border:1px solid var(--line);overflow:hidden;">
+    <div style="display:grid;grid-template-columns:100px 1fr;gap:1px;background:var(--line);margin-bottom:1px;">
+      <div style="background:var(--bg3);padding:0.7rem;font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--accent);">🟢 GREEN</div>
+      <div style="background:var(--bg2);padding:0.7rem;font-size:0.78rem;color:var(--text2);">Sleep ≥7h + stress ≤5. Train as programmed. Optional top set at RPE 8–9.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:100px 1fr;gap:1px;background:var(--line);margin-bottom:1px;">
+      <div style="background:var(--bg3);padding:0.7rem;font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--accent2);">🟡 YELLOW</div>
+      <div style="background:var(--bg2);padding:0.7rem;font-size:0.78rem;color:var(--text2);">Sleep 6–7h OR stress 6–7. Drop RPE by 1. Remove HIIT. Keep skill work.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:100px 1fr;gap:1px;background:var(--line);">
+      <div style="background:var(--bg3);padding:0.7rem;font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--accent3);">🔴 RED</div>
+      <div style="background:var(--bg2);padding:0.7rem;font-size:0.78rem;color:var(--text2);">Sleep &lt;6h OR stress ≥8. Skill + 1 main lift only. Or: 30 min Zone 1 walk + mobility.</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:1.5rem;">Progression Logic</div>
+  <div style="background:var(--bg2);border:1px solid var(--line);padding:1rem;font-size:0.8rem;color:var(--text2);line-height:1.8;">
+    <strong style="color:var(--text);">Double Progression:</strong> Each lift has a rep range (e.g. 4×5–8). When all sets hit the top (8 reps) at RPE ≤8 → increase weight next session (2.5–5kg lower, 1.25–2.5kg upper).<br><br>
+    <strong style="color:var(--text);">After 1 week off:</strong> Resume sequence. Reduce loads 10–15%. No punishment sessions.<br><br>
+    <strong style="color:var(--text);">Deload weeks:</strong> Week 5 and 10 of each block. 30–40% volume reduction. Mandatory.
+  </div>
+</div>
+
+<!-- BENCHMARK MODAL -->
+<div class="modal-overlay" id="benchModal">
+  <div class="modal">
+    <div class="modal-title">
+      Log Benchmark Test
+      <button class="modal-close" onclick="closeBenchModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input type="date" class="form-input" id="benchDate">
+    </div>
+    <div id="benchInputFields"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:1rem;" onclick="saveBenchmark()">Save Benchmarks</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="bottom-nav-btn active" id="bnav-dashboard" onclick="showView('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </button>
+  <button class="bottom-nav-btn" id="bnav-log" onclick="showView('log')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Log
+  </button>
+  <button class="bottom-nav-btn" id="bnav-skills" onclick="showView('skills')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+    Skills
+  </button>
+  <button class="bottom-nav-btn" id="bnav-benchmarks" onclick="showView('benchmarks')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+    Tests
+  </button>
+  <button class="bottom-nav-btn" id="bnav-reference" onclick="showView('reference')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    Program
+  </button>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+
+const DAYS = {
+  A: {
+    name: 'Lower Body',
+    color: 'var(--accent)',
+    focus: 'Squat pattern · Handstand · Hip hinge',
+    exercises: [
+      { name: 'Back Squat', target: '4×5–8', rpe: 'RPE 6–7' },
+      { name: 'Romanian Deadlift', target: '3×8', rpe: '3 sec eccentric' },
+      { name: 'Bulgarian Split Squat', target: '3×8/side', rpe: 'BW or light DB' },
+    ],
+    skill: 'handstand',
+    conditioning: false
+  },
+  B: {
+    name: 'Upper Push',
+    color: 'var(--accent2)',
+    focus: 'Press · L-sit · Back lever · HIIT',
+    exercises: [
+      { name: 'Barbell Bench Press', target: '4×5–8', rpe: 'RPE 6–7' },
+      { name: 'Overhead Press', target: '3×6', rpe: 'Full range' },
+      { name: 'Weighted Dips', target: '3×6–8', rpe: 'Control descent' },
+    ],
+    skill: 'lsit',
+    conditioning: true
+  },
+  C: {
+    name: 'Upper Pull',
+    color: 'var(--accent4)',
+    focus: 'Front lever first · Pull strength · No conditioning',
+    exercises: [
+      { name: 'Weighted Pull-up', target: '4×5–8', rpe: 'RPE 6–7' },
+      { name: 'Barbell Row', target: '3×8', rpe: 'Pendlay style' },
+      { name: 'Conventional Deadlift', target: '3×5', rpe: 'RPE 6–7' },
+    ],
+    skill: 'frontlever',
+    conditioning: false
+  },
+  Z: {
+    name: 'Zone 2 / Outdoor',
+    color: 'var(--accent3)',
+    focus: 'Mountain bike · Hike · Easy run',
+    exercises: [],
+    skill: null,
+    conditioning: true
+  }
+};
+
+const SKILLS = [
+  {
+    id: 'handstand',
+    name: 'Handstand',
+    icon: '🤸',
+    day: 'A + B',
+    steps: [
+      { title: 'Wall Hold (Back to Wall)', detail: '5×30 sec → 5×60 sec', unlock: '5×60 sec, 3 sessions' },
+      { title: 'Chest-to-Wall Alignment Hold', detail: '5×20 sec → 5×45 sec', unlock: '5×45 sec, 3 sessions' },
+      { title: 'Wall Shoulder Taps', detail: '3×8 taps/side', unlock: '3×8/side smooth, 3 sessions' },
+      { title: 'Freestanding Kick-up Attempts', detail: '5 min practice, log total seconds', unlock: '3×5 sec freestanding, 3 sessions' },
+      { title: 'Freestanding Hold', detail: '3×10 sec → 3×30 sec', unlock: 'KPI: 30 sec hold' },
+    ]
+  },
+  {
+    id: 'frontlever',
+    name: 'Front Lever',
+    icon: '🔁',
+    day: 'C only (fresh)',
+    steps: [
+      { title: 'Tuck Front Lever Hold', detail: '4×8–12 sec', unlock: '4×12 sec, 3 sessions' },
+      { title: 'Advanced Tuck Front Lever', detail: '4×8–12 sec, back flat', unlock: '4×12 sec, 3 sessions' },
+      { title: 'One-Leg Front Lever', detail: '4×8–10 sec', unlock: '4×10 sec, 3 sessions' },
+      { title: 'Straddle Front Lever', detail: '4×6–10 sec', unlock: '4×10 sec, 3 sessions' },
+      { title: 'Full Front Lever', detail: '3×5–8 sec', unlock: 'KPI: 10 sec hold' },
+    ]
+  },
+  {
+    id: 'backlever',
+    name: 'Back Lever',
+    icon: '↩️',
+    day: 'B',
+    steps: [
+      { title: 'Skin the Cat', detail: '3×3–5 reps, full ROM', unlock: '3×5 smooth, 3 sessions' },
+      { title: 'Tuck Back Lever Hold', detail: '4×8–15 sec', unlock: '4×15 sec, 3 sessions' },
+      { title: 'Advanced Tuck', detail: '4×10 sec', unlock: '4×10 sec, 3 sessions' },
+      { title: 'Straddle', detail: '4×8 sec', unlock: '4×8 sec, 3 sessions' },
+      { title: 'Full Back Lever', detail: '3×5 sec', unlock: 'KPI: 10 sec hold' },
+    ]
+  },
+  {
+    id: 'lsit',
+    name: 'L-Sit',
+    icon: '⬛',
+    day: 'B',
+    steps: [
+      { title: 'Tuck Support Hold', detail: '5×10–20 sec, arms locked', unlock: '5×20 sec, 3 sessions' },
+      { title: 'Single Leg Extension', detail: '5×10–15 sec each leg', unlock: '5×15 sec, 3 sessions' },
+      { title: 'Full L-Sit', detail: '5×5 sec → 5×30 sec', unlock: 'KPI: 30 sec hold' },
+    ]
+  },
+  {
+    id: 'humanflag',
+    name: 'Human Flag',
+    icon: '🚩',
+    day: '1–2×/week (Year 2)',
+    steps: [
+      { title: 'Prerequisites', detail: '15 pull-ups + 20 sec side plank', unlock: 'All 3 prerequisites met' },
+      { title: 'Vertical Pole Tuck Holds', detail: '3×5–10 sec', unlock: '3×10 sec, 3 sessions' },
+      { title: 'Straddle Flag', detail: '3×5 sec', unlock: '3×5 sec, 3 sessions' },
+      { title: 'Full Human Flag', detail: '3×5 sec', unlock: 'KPI: 5 sec hold' },
+    ]
+  }
+];
+
+const BENCHMARKS = [
+  { id: 'pullups', name: 'Max Pull-ups', unit: 'reps' },
+  { id: 'pushups', name: 'Max Push-ups', unit: 'reps' },
+  { id: 'squat1rm', name: 'Squat Est. 1RM', unit: 'kg' },
+  { id: 'hshold', name: 'Handstand Hold', unit: 'sec' },
+  { id: 'toetouch', name: 'Toe Touch', unit: 'cm to floor' },
+  { id: 'vo2max', name: 'VO₂max (Watch)', unit: 'ml/kg/min' },
+  { id: 'resthr', name: 'Resting HR', unit: 'bpm' },
+  { id: 'deadlift', name: 'Deadlift Est. 1RM', unit: 'kg' },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+function load(key, def) {
+  try { const v = localStorage.getItem('hybridOS_' + key); return v ? JSON.parse(v) : def; } catch(e) { return def; }
+}
+function save(key, val) {
+  try { localStorage.setItem('hybridOS_' + key, JSON.stringify(val)); } catch(e) {}
+}
+
+let sessions = load('sessions', []);
+let skillState = load('skillState', {});
+let benchmarkHistory = load('benchmarkHistory', []);
+let selectedDay = null;
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+
+function init() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('sessionDate').value = today;
+  document.getElementById('benchDate').value = today;
+  renderDashboard();
+  renderSkills();
+  renderBenchmarks();
+  buildBenchInputs();
+}
+
+// ─── VIEW SWITCHING ───────────────────────────────────────────────────────────
+
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const bnavBtn = document.getElementById('bnav-' + name);
+  if (bnavBtn) bnavBtn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ─── AUTOREGULATION ───────────────────────────────────────────────────────────
+
+function updateAutoReg() {
+  const sleep = parseFloat(document.getElementById('sleepInput').value) || 7;
+  const stress = parseInt(document.getElementById('stressInput').value) || 5;
+  const dot = document.getElementById('autoDot');
+  const text = document.getElementById('autoText');
+  const rule = document.getElementById('autoRule');
+
+  if (sleep >= 7 && stress <= 5) {
+    dot.className = 'auto-dot auto-green';
+    text.textContent = '🟢 Green light — train as programmed.';
+    rule.textContent = 'Optional: add 1 top set at RPE 8–9 if feeling strong.';
+  } else if (sleep >= 6 || stress <= 7) {
+    dot.className = 'auto-dot auto-yellow';
+    text.textContent = '🟡 Yellow light — train, but pull back slightly.';
+    rule.textContent = 'Drop RPE target by 1. Remove HIIT finisher. Keep skill work.';
+  } else {
+    dot.className = 'auto-dot auto-red';
+    text.textContent = '🔴 Red light — minimum session only.';
+    rule.textContent = 'Skill + 1 main lift only. Or: 30 min Zone 1 walk + mobility.';
+  }
+}
+
+// ─── NEXT DAY LOGIC ──────────────────────────────────────────────────────────
+
+function getNextDay() {
+  if (sessions.length === 0) return 'A';
+  const last = sessions[sessions.length - 1];
+  const seq = ['A','B','C','Z','A','B','C'];
+  const idx = seq.indexOf(last.day);
+  return idx >= 0 ? seq[idx + 1] || 'A' : 'A';
+}
+
+function preselectNextDay() {
+  const next = getNextDay();
+  selectDay(next);
+}
+
+// ─── DASHBOARD ───────────────────────────────────────────────────────────────
+
+function renderDashboard() {
+  const next = getNextDay();
+  const dayInfo = DAYS[next];
+  document.getElementById('nextDay').textContent = 'Day ' + next + ' — ' + dayInfo.name;
+  document.getElementById('nextDayFocus').textContent = dayInfo.focus;
+
+  // KPIs
+  const now = new Date();
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - now.getDay());
+  weekStart.setHours(0,0,0,0);
+
+  const thisWeek = sessions.filter(s => new Date(s.date) >= weekStart);
+  document.getElementById('kpiSessions').textContent = thisWeek.length;
+  document.getElementById('kpiTotal').textContent = sessions.length;
+
+  // Block number (every 12 weeks)
+  const firstSession = sessions.length > 0 ? new Date(sessions[0].date) : new Date();
+  const weeksSince = Math.floor((now - firstSession) / (7*24*3600*1000));
+  document.getElementById('kpiBlock').textContent = Math.floor(weeksSince / 12) + 1;
+
+  // Streak (consecutive weeks with 3+ sessions)
+  let streak = 0;
+  // simplified: just count consecutive weeks from most recent
+  document.getElementById('kpiStreak').textContent = streak;
+
+  // Streak bar (last 7 days)
+  const bar = document.getElementById('streakBar');
+  bar.innerHTML = '';
+  const days = ['M','T','W','T','F','S','S'];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - (6 - i));
+    d.setHours(0,0,0,0);
+    const dStr = d.toISOString().split('T')[0];
+    const isToday = dStr === now.toISOString().split('T')[0];
+    const hasSesh = sessions.some(s => s.date === dStr);
+    const el = document.createElement('div');
+    el.className = 'streak-day' + (hasSesh ? ' done' : '') + (isToday && !hasSesh ? ' today' : '');
+    el.textContent = days[i];
+    bar.appendChild(el);
+  }
+
+  // Week checks
+  const hasStrength = thisWeek.some(s => ['A','B','C'].includes(s.day));
+  const hasSkill = thisWeek.some(s => s.skillNotes && s.skillNotes.trim());
+  const hasVO2 = thisWeek.some(s => s.condType && s.condType !== '');
+  const mobilityCount = sessions.filter(s => {
+    const d = new Date(s.date);
+    return d >= weekStart;
+  }).length;
+
+  setCheck('chk-strength', hasStrength);
+  setCheck('chk-skill', hasSkill);
+  setCheck('chk-vo2', hasVO2);
+  setCheck('chk-mobility', mobilityCount >= 3);
+
+  // Recent sessions
+  const container = document.getElementById('recentSessions');
+  const recent = [...sessions].reverse().slice(0, 6);
+  if (recent.length === 0) {
+    container.innerHTML = '<div class="empty"><span class="empty-icon">🏋️</span>No sessions yet. Log your first session to start the sequence.</div>';
+    return;
+  }
+  container.innerHTML = recent.map(s => `
+    <div class="session-log-item day-${s.day.toLowerCase()}">
+      <div class="log-left">
+        <div class="log-day">Day ${s.day} — ${DAYS[s.day]?.name || s.day}</div>
+        <div class="log-date">${formatDate(s.date)} · ${s.duration || '?'} min</div>
+        ${s.notes ? `<div class="log-summary">${s.notes.substring(0,80)}${s.notes.length>80?'…':''}</div>` : ''}
+      </div>
+      <button class="btn btn-sm btn-danger" onclick="deleteSession('${s.id}')">✕</button>
+    </div>
+  `).join('');
+}
+
+function setCheck(id, done) {
+  const el = document.getElementById(id);
+  if (el) el.className = 'check-dot' + (done ? ' done' : '');
+}
+
+// ─── LOG SESSION ─────────────────────────────────────────────────────────────
+
+function selectDay(day) {
+  selectedDay = day;
+  document.querySelectorAll('.day-btn').forEach(b => {
+    b.className = 'day-btn';
+  });
+  const colors = { A: 'selected-a', B: 'selected-b', C: 'selected-c', Z: 'selected-z' };
+  document.getElementById('btn-' + day).className = 'day-btn ' + colors[day];
+
+  const info = DAYS[day];
+  const desc = document.getElementById('dayDescription');
+  desc.style.display = 'block';
+  desc.innerHTML = `<strong>${info.name}</strong> — ${info.focus}`;
+
+  // Show exercises
+  const exSection = document.getElementById('exerciseSection');
+  const exList = document.getElementById('exerciseList');
+
+  if (info.exercises.length > 0) {
+    exSection.style.display = 'block';
+    exList.innerHTML = info.exercises.map((ex, i) => `
+      <div class="exercise-entry">
+        <div class="exercise-entry-header">
+          <div class="exercise-name-display">${ex.name}</div>
+          <span class="tag">${ex.target}</span>
+        </div>
+        <div class="sets-row">
+          <div class="set-input-wrap">
+            <div class="set-input-label">Weight (kg)</div>
+            <input type="number" class="set-input" id="ex-${i}-weight" placeholder="—" step="0.5">
+          </div>
+          <div class="set-input-wrap">
+            <div class="set-input-label">Sets done</div>
+            <input type="number" class="set-input" id="ex-${i}-sets" placeholder="4" min="1" max="6">
+          </div>
+          <div class="set-input-wrap">
+            <div class="set-input-label">Reps (last set)</div>
+            <input type="number" class="set-input" id="ex-${i}-reps" placeholder="—" min="1" max="30">
+          </div>
+        </div>
+        <div id="ex-${i}-flag" style="margin-top:0.4rem;"></div>
+      </div>
+    `).join('');
+
+    // Auto-flag progression on input
+    info.exercises.forEach((ex, i) => {
+      const repsEl = document.getElementById(`ex-${i}-reps`);
+      if (repsEl) repsEl.addEventListener('input', () => checkProgression(i, ex.target));
+    });
+  } else {
+    exSection.style.display = 'none';
+  }
+
+  // Skill section
+  const skillSection = document.getElementById('skillSection');
+  const skillList = document.getElementById('skillLogList');
+  if (info.skill) {
+    skillSection.style.display = 'block';
+    const skill = SKILLS.find(s => s.id === info.skill);
+    const level = (skillState[info.skill]?.level || 0);
+    const step = skill ? skill.steps[level] : null;
+    skillList.innerHTML = `
+      <div class="exercise-entry">
+        <div class="exercise-entry-header">
+          <div class="exercise-name-display">${skill ? skill.icon + ' ' + skill.name : info.skill}</div>
+          <span class="tag" style="border-color:var(--accent2);color:var(--accent2);">Level ${level + 1}</span>
+        </div>
+        ${step ? `<div style="font-size:0.75rem;color:var(--text2);margin-bottom:0.6rem;">${step.title} — ${step.detail}</div>` : ''}
+        <div class="sets-row">
+          <div class="set-input-wrap">
+            <div class="set-input-label">Sets done</div>
+            <input type="number" class="set-input" id="skill-sets" placeholder="4" min="1" max="8">
+          </div>
+          <div class="set-input-wrap">
+            <div class="set-input-label">Hold (sec)</div>
+            <input type="number" class="set-input" id="skill-hold" placeholder="—">
+          </div>
+          <div class="set-input-wrap">
+            <div class="set-input-label">Feel (1–5)</div>
+            <input type="number" class="set-input" id="skill-feel" placeholder="3" min="1" max="5">
+          </div>
+        </div>
+        <div style="margin-top:0.5rem;">
+          <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;color:var(--text2);cursor:pointer;">
+            <input type="checkbox" id="skill-unlock-check" style="accent-color:var(--accent);">
+            Hit unlock gate this session
+          </label>
+        </div>
+      </div>
+    `;
+  } else {
+    skillSection.style.display = 'none';
+  }
+
+  // Conditioning
+  const condSection = document.getElementById('condSection');
+  condSection.style.display = info.conditioning ? 'block' : 'none';
+}
+
+function checkProgression(i, target) {
+  const repsEl = document.getElementById(`ex-${i}-reps`);
+  const flagEl = document.getElementById(`ex-${i}-flag`);
+  if (!repsEl || !flagEl) return;
+  const reps = parseInt(repsEl.value);
+  const match = target.match(/(\d+)–(\d+)/);
+  if (!match) return;
+  const max = parseInt(match[2]);
+  if (reps >= max) {
+    flagEl.innerHTML = '<div class="progression-flag flag-up">↑ INCREASE WEIGHT NEXT SESSION</div>';
+  } else {
+    flagEl.innerHTML = '<div class="progression-flag flag-hold">→ HOLD WEIGHT</div>';
+  }
+}
+
+function saveSession() {
+  if (!selectedDay) { showToast('Select a day type first'); return; }
+  const date = document.getElementById('sessionDate').value;
+  if (!date) { showToast('Select a date'); return; }
+
+  const info = DAYS[selectedDay];
+  const exerciseData = info.exercises.map((ex, i) => ({
+    name: ex.name,
+    weight: document.getElementById(`ex-${i}-weight`)?.value || '',
+    sets: document.getElementById(`ex-${i}-sets`)?.value || '',
+    reps: document.getElementById(`ex-${i}-reps`)?.value || '',
+  }));
+
+  // Handle skill progression
+  let skillNotes = '';
+  if (info.skill) {
+    const unlocked = document.getElementById('skill-unlock-check')?.checked;
+    const hold = document.getElementById('skill-hold')?.value;
+    const sets = document.getElementById('skill-sets')?.value;
+    skillNotes = `Sets: ${sets}, Hold: ${hold}s`;
+
+    if (unlocked) {
+      if (!skillState[info.skill]) skillState[info.skill] = { level: 0, sessions: 0 };
+      skillState[info.skill].sessions = (skillState[info.skill].sessions || 0) + 1;
+      if (skillState[info.skill].sessions >= 3) {
+        const skill = SKILLS.find(s => s.id === info.skill);
+        const maxLevel = skill ? skill.steps.length - 1 : 4;
+        if (skillState[info.skill].level < maxLevel) {
+          skillState[info.skill].level++;
+          skillState[info.skill].sessions = 0;
+          showToast('🎉 Skill unlocked — next level!');
+        }
+      } else {
+        showToast(`Gate session ${skillState[info.skill].sessions}/3`);
+      }
+      save('skillState', skillState);
+    }
+  }
+
+  const session = {
+    id: Date.now().toString(),
+    day: selectedDay,
+    date,
+    duration: document.getElementById('sessionDuration').value || '',
+    exercises: exerciseData,
+    skillNotes,
+    condType: document.getElementById('condType')?.value || '',
+    condDetails: document.getElementById('condDetails')?.value || '',
+    notes: document.getElementById('sessionNotes').value || '',
+  };
+
+  sessions.push(session);
+  save('sessions', sessions);
+  showToast('Session saved ✓');
+  setTimeout(() => { showView('dashboard'); renderDashboard(); renderSkills(); }, 600);
+
+  // Reset form
+  selectedDay = null;
+  document.querySelectorAll('.day-btn').forEach(b => b.className = 'day-btn');
+  document.getElementById('sessionNotes').value = '';
+  document.getElementById('sessionDuration').value = '';
+  document.getElementById('dayDescription').style.display = 'none';
+  document.getElementById('exerciseSection').style.display = 'none';
+  document.getElementById('skillSection').style.display = 'none';
+  document.getElementById('condSection').style.display = 'none';
+}
+
+function deleteSession(id) {
+  sessions = sessions.filter(s => s.id !== id);
+  save('sessions', sessions);
+  renderDashboard();
+  showToast('Session removed');
+}
+
+// ─── SKILLS ──────────────────────────────────────────────────────────────────
+
+function renderSkills() {
+  const container = document.getElementById('skillsContainer');
+  container.innerHTML = SKILLS.map(skill => {
+    const state = skillState[skill.id] || { level: 0, sessions: 0 };
+    const currentLevel = state.level || 0;
+    const gateSessions = state.sessions || 0;
+
+    const stepsHtml = skill.steps.map((step, i) => {
+      let status = 'locked';
+      if (i < currentLevel) status = 'completed';
+      if (i === currentLevel) status = 'current';
+
+      const dots = [0,1,2].map(d => `<div class="sdot ${d < gateSessions ? 'filled' : ''}"></div>`).join('');
+
+      return `
+        <div class="skill-step ${status}">
+          <div class="skill-step-num">${i+1}</div>
+          <div class="skill-step-content">
+            <div class="skill-step-title">${status === 'completed' ? '✓ ' : ''}${step.title}</div>
+            <div class="skill-step-detail">${step.detail}</div>
+            ${status === 'current' ? `<div class="skill-step-unlock">UNLOCK: ${step.unlock}</div>` : ''}
+          </div>
+          ${status === 'current' ? `
+          <div class="skill-step-right">
+            <div class="session-dots">${dots}</div>
+            <div class="session-count">${gateSessions}/3<br>sessions</div>
+          </div>` : '<div style="width:70px;"></div>'}
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="skill-block">
+        <div class="skill-header" onclick="toggleSkill('${skill.id}')">
+          <div class="skill-icon">${skill.icon}</div>
+          <div>
+            <div class="skill-name">${skill.name}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--text3);">${skill.day}</div>
+          </div>
+          <div class="skill-level-badge">LVL ${currentLevel + 1}/${skill.steps.length}</div>
+        </div>
+        <div class="skill-steps" id="skill-steps-${skill.id}">
+          ${stepsHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleSkill(id) {
+  const el = document.getElementById('skill-steps-' + id);
+  if (el) el.classList.toggle('open');
+}
+
+// ─── BENCHMARKS ──────────────────────────────────────────────────────────────
+
+function renderBenchmarks() {
+  const grid = document.getElementById('benchGrid');
+  grid.innerHTML = BENCHMARKS.map(b => {
+    const history = benchmarkHistory.map(entry => entry[b.id]).filter(v => v !== undefined && v !== '');
+    const latest = history.length > 0 ? history[history.length - 1] : '—';
+    const maxVal = history.length > 0 ? Math.max(...history) : 1;
+    const bars = history.slice(-8).map((v, i, arr) => {
+      const h = Math.max(3, Math.round((v / maxVal) * 24));
+      return `<div class="bench-bar ${i === arr.length - 1 ? 'latest' : ''}" style="height:${h}px;"></div>`;
+    }).join('');
+
+    return `
+      <div class="bench-item">
+        <div class="bench-name">${b.name}</div>
+        <div class="bench-current">${latest}</div>
+        <div class="bench-unit">${b.unit}</div>
+        <div class="bench-history">${bars || '<div style="color:var(--text3);font-size:0.6rem;font-family:DM Mono,monospace;">no data yet</div>'}</div>
+      </div>
+    `;
+  }).join('');
+
+  const histContainer = document.getElementById('benchHistory');
+  if (benchmarkHistory.length === 0) {
+    histContainer.innerHTML = '<div class="empty"><span class="empty-icon">📊</span>No benchmark tests yet. Run your first test on deload week (Week 5).</div>';
+    return;
+  }
+  histContainer.innerHTML = [...benchmarkHistory].reverse().slice(0,5).map(entry => `
+    <div class="session-log-item" style="flex-direction:column;align-items:flex-start;">
+      <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--accent);margin-bottom:0.4rem;">${formatDate(entry.date)}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
+        ${BENCHMARKS.filter(b => entry[b.id]).map(b => `<span class="tag">${b.name}: <strong style="color:var(--text)">${entry[b.id]}</strong> ${b.unit}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function buildBenchInputs() {
+  const container = document.getElementById('benchInputFields');
+  container.innerHTML = BENCHMARKS.map(b => `
+    <div class="form-group">
+      <label class="form-label">${b.name} <span style="color:var(--text3)">(${b.unit})</span></label>
+      <input type="number" class="form-input" id="bench-input-${b.id}" placeholder="—" step="0.1">
+    </div>
+  `).join('');
+}
+
+function openBenchModal() {
+  document.getElementById('benchModal').classList.add('open');
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('benchDate').value = today;
+}
+
+function closeBenchModal() {
+  document.getElementById('benchModal').classList.remove('open');
+}
+
+function saveBenchmark() {
+  const entry = { date: document.getElementById('benchDate').value };
+  BENCHMARKS.forEach(b => {
+    const val = document.getElementById('bench-input-' + b.id)?.value;
+    if (val) entry[b.id] = parseFloat(val);
+  });
+  benchmarkHistory.push(entry);
+  save('benchmarkHistory', benchmarkHistory);
+  closeBenchModal();
+  renderBenchmarks();
+  showToast('Benchmarks saved ✓');
+  BENCHMARKS.forEach(b => {
+    const el = document.getElementById('bench-input-' + b.id);
+    if (el) el.value = '';
+  });
+}
+
+// ─── REFERENCE ───────────────────────────────────────────────────────────────
+
+function toggleRef(day) {
+  const el = document.getElementById('ref-' + day);
+  if (el) el.classList.toggle('open');
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+
+function formatDate(str) {
+  if (!str) return '—';
+  const d = new Date(str + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ─── START ────────────────────────────────────────────────────────────────────
+
+init();
+</script>
+</body>
+</html>

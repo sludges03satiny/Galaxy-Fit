@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hybrid Athlete Training OS</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a08;
+    --bg2: #111110;
+    --bg3: #1a1a17;
+    --line: #2a2a25;
+    --line2: #3a3a33;
+    --text: #e8e6dc;
+    --text2: #9e9b8e;
+    --text3: #6a6860;
+    --accent: #c8f050;
+    --accent2: #f0c828;
+    --accent3: #f05050;
+    --accent4: #50c8f0;
+    --accent5: #c850f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(10,10,8,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    padding: 0 2rem;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-right: 2rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  nav a {
+    color: var(--text3);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    padding: 0 0.9rem;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    transition: color 0.2s;
+    border-right: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  nav a:first-of-type { border-left: 1px solid var(--line); }
+  nav a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    padding: 120px 0 80px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 10vw, 9rem);
+    letter-spacing: 0.04em;
+    line-height: 0.9;
+    color: var(--text);
+    margin-bottom: 0.3em;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--text2);
+    max-width: 560px;
+    margin-top: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 0;
+    margin-top: 3rem;
+    border: 1px solid var(--line);
+    width: fit-content;
+  }
+
+  .hero-stat {
+    padding: 1rem 1.8rem;
+    border-right: 1px solid var(--line);
+  }
+  .hero-stat:last-child { border-right: none; }
+
+  .hero-stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    display: block;
+  }
+
+  .hero-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+  }
+
+  /* GRID BG DECORATION */
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: -100px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(200,240,80,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* SECTIONS */
+  section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
+  }
+
+  h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+    margin-top: 2rem;
+  }
+
+  h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  p { color: var(--text2); margin-bottom: 1rem; }
+
+  strong { color: var(--text); font-weight: 500; }
+
+  /* CARDS */
+  .card-grid {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .card-grid-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card-grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  @media (max-width: 768px) {
+    .card-grid-2, .card-grid-3, .card-grid-4 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--bg2);
+    padding: 1.5rem;
+  }
+
+  .card-accent { border-top: 2px solid var(--accent); }
+  .card-accent2 { border-top: 2px solid var(--accent2); }
+  .card-accent3 { border-top: 2px solid var(--accent3); }
+  .card-accent4 { border-top: 2px solid var(--accent4); }
+  .card-accent5 { border-top: 2px solid var(--accent5); }
+
+  .card h3 { font-size: 1.2rem; margin-top: 0; }
+
+  /* PILL TAGS */
+  .tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 0.2em 0.7em;
+    border: 1px solid var(--line2);
+    color: var(--text3);
+    margin: 0.2rem 0.2rem 0.2rem 0;
+  }
+
+  .tag-green { border-color: var(--accent); color: var(--accent); }
+  .tag-yellow { border-color: var(--accent2); color: var(--accent2); }
+  .tag-red { border-color: var(--accent3); color: var(--accent3); }
+  .tag-blue { border-color: var(--accent4); color: var(--accent4); }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.88rem;
+  }
+
+  th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    text-align: left;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--line2);
+    text-transform: uppercase;
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--text2);
+    vertical-align: top;
+  }
+
+  tr:hover td { background: var(--bg3); }
+
+  td strong { color: var(--text); }
+
+  /* PROGRESSION LADDER */
+  .ladder {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--line);
+  }
+
+  .ladder-step {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.15s;
+  }
+  .ladder-step:last-child { border-bottom: none; }
+  .ladder-step:hover { background: var(--bg3); }
+
+  .ladder-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--line2);
+    padding: 0.8rem 1.2rem;
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--line);
+  }
+
+  .ladder-content {
+    padding: 0.8rem 1.2rem;
+    flex: 1;
+  }
+
+  .ladder-title {
+    color: var(--text);
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  .ladder-detail {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text3);
+    margin-top: 0.2rem;
+  }
+
+  .ladder-unlock {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    padding: 0.8rem 1.2rem;
+    display: flex;
+    align-items: center;
+    border-left: 1px solid var(--line);
+    min-width: 140px;
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* PHASE TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--line2);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2.5rem;
+    padding-left: 1rem;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 0.4rem;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+
+  .timeline-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+
+  .timeline-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  /* RULE BLOCK */
+  .rule-block {
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.5rem;
+    background: var(--bg3);
+    margin: 1.5rem 0;
+  }
+
+  .rule-block.yellow { border-left-color: var(--accent2); }
+  .rule-block.red { border-left-color: var(--accent3); }
+  .rule-block.blue { border-left-color: var(--accent4); }
+
+  .rule-block p { margin: 0; }
+
+  /* HR ZONES */
+  .zone-bar {
+    height: 36px;
+    display: flex;
+    margin: 1.5rem 0;
+    border: 1px solid var(--line);
+  }
+
+  .zone-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.05em;
+    color: var(--bg);
+    font-weight: 500;
+  }
+
+  /* SPREADSHEET PREVIEW */
+  .sheet-preview {
+    background: var(--bg3);
+    border: 1px solid var(--line);
+    overflow-x: auto;
+    padding: 1.5rem;
+  }
+
+  .sheet-preview table { margin: 0; }
+  .sheet-preview th { background: var(--bg); }
+  .sheet-preview td { font-family: 'DM Mono', monospace; font-size: 0.72rem; }
+
+  /* SAMPLE WEEK */
+  .day-block {
+    border: 1px solid var(--line);
+    margin-bottom: 1px;
+  }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .day-letter {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    line-height: 1;
+  }
+
+  .day-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--text2);
+  }
+
+  .day-duration {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text3);
+    border: 1px solid var(--line2);
+    padding: 0.2em 0.6em;
+  }
+
+  .day-body { padding: 0; }
+
+  .exercise-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    padding: 0.6rem 1.2rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.85rem;
+  }
+  .exercise-row:last-child { border-bottom: none; }
+  .exercise-row:hover { background: var(--bg3); }
+
+  .exercise-name { color: var(--text); }
+  .exercise-sets { color: var(--accent2); font-family: 'DM Mono', monospace; font-size: 0.75rem; }
+  .exercise-reps { color: var(--text2); font-family: 'DM Mono', monospace; font-size: 0.75rem; }
+  .exercise-note { color: var(--text3); font-family: 'DM Mono', monospace; font-size: 0.65rem; }
+
+  .exercise-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  .section-divider {
+    background: var(--bg);
+    padding: 0.4rem 1.2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    border-bottom: 1px solid var(--line);
+    text-transform: uppercase;
+  }
+
+  /* AUTOREGULATION TABLE */
+  .auto-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 600px) {
+    .auto-grid { grid-template-columns: 1fr; }
+  }
+
+  .auto-cell {
+    background: var(--bg2);
+    padding: 1.2rem;
+  }
+
+  .auto-condition {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .auto-action {
+    color: var(--text);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  /* MACRO CYCLE */
+  .macro-row {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-bottom: 1px;
+  }
+
+  .macro-label {
+    background: var(--bg3);
+    padding: 0.8rem 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+  }
+
+  .macro-bar-wrap {
+    background: var(--bg2);
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .macro-bar {
+    height: 20px;
+    border-left: 3px solid;
+    padding-left: 0.5rem;
+    display: flex;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text2);
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--line2); }
+
+  /* PRINT */
+  @media print {
+    nav { display: none; }
+    body { background: white; color: black; }
+  }
+
+  /* EXPANDABLE */
+  details { margin: 0.5rem 0; }
+  details summary {
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--text2);
+    padding: 0.6rem 1rem;
+    background: var(--bg3);
+    border: 1px solid var(--line);
+    list-style: none;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: '▶ '; color: var(--accent); font-size: 0.6rem; }
+  details[open] summary::before { content: '▼ '; }
+  details[open] summary { border-bottom: none; }
+  details .details-body {
+    border: 1px solid var(--line);
+    border-top: none;
+    padding: 1rem;
+    background: var(--bg2);
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin: 1rem 0;
+  }
+
+  .kpi-item {
+    background: var(--bg2);
+    padding: 1.2rem;
+  }
+
+  .kpi-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    display: block;
+  }
+
+  .kpi-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: block;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  ul li {
+    color: var(--text2);
+    padding: 0.25rem 0;
+    padding-left: 1.2rem;
+    position: relative;
+    font-size: 0.9rem;
+  }
+
+  ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--line2);
+    font-size: 0.8rem;
+  }
+
+  .highlight-box {
+    background: rgba(200,240,80,0.05);
+    border: 1px solid rgba(200,240,80,0.2);
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .highlight-box p { margin: 0; color: var(--text); }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">HYBRID OS</span>
+  <a href="#philosophy">PHILOSOPHY</a>
+  <a href="#template">TEMPLATE</a>
+  <a href="#strength">STRENGTH</a>
+  <a href="#skills">SKILLS</a>
+  <a href="#cardio">VO₂MAX</a>
+  <a href="#mobility">MOBILITY</a>
+  <a href="#tracking">TRACKING</a>
+  <a href="#sustainability">SUSTAINABILITY</a>
+  <a href="#macro">MACRO CYCLE</a>
+  <a href="#week">SAMPLE WEEK</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <span class="hero-tag">// HYBRID ATHLETE TRAINING OS — VERSION 2.0</span>
+    <h1>TRAIN<br><span>FOREVER</span></h1>
+    <p class="hero-sub">A complete, indefinitely scalable training system. Built for strength, skill mastery, VO₂max, and longevity. Designed to survive missed days, low motivation, and years of real life.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-val">5</span>
+        <span class="hero-stat-label">Pillars</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">A/B/C</span>
+        <span class="hero-stat-label">Rolling Sequence</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">12W</span>
+        <span class="hero-stat-label">Repeating Blocks</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">∞</span>
+        <span class="hero-stat-label">Scalability</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1. PHILOSOPHY -->
+<section id="philosophy">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2>HIGH-LEVEL PHILOSOPHY</h2>
+  </div>
+
+  <p>The system is built to last years, not weeks. Every structural decision exists to prevent the two failure modes you've shown: <strong>burning out when things get hard</strong> and <strong>fading when structure disappears</strong>. The antidote isn't more discipline — it's better architecture.</p>
+
+  <div class="card-grid card-grid-3" style="margin: 2rem 0;">
+    <div class="card card-accent">
+      <h3>Strength = Foundation</h3>
+      <p style="font-size:0.85rem;">Heavy compounds come first. They drive bone density, hormonal output, and joint health — the physical infrastructure that makes everything else work. No junk volume.</p>
+      <span class="tag tag-green">Axial loading</span>
+      <span class="tag tag-green">Bone density</span>
+      <span class="tag tag-green">Neural efficiency</span>
+    </div>
+    <div class="card card-accent2">
+      <h3>Skill = Practice, Not Training</h3>
+      <p style="font-size:0.85rem;">Handstand, levers, L-sit — these are done fresh, submaximal, and frequent. They have their own progression gates and are never placed after fatiguing work.</p>
+      <span class="tag tag-yellow">Fresh CNS</span>
+      <span class="tag tag-yellow">Submaximal</span>
+      <span class="tag tag-yellow">High frequency</span>
+    </div>
+    <div class="card card-accent4">
+      <h3>VO₂max = Multiplier</h3>
+      <p style="font-size:0.85rem;">Cardiovascular capacity raises the ceiling on everything else. It's periodized across blocks — not the same intervals forever — to prevent adaptation plateau and burnout.</p>
+      <span class="tag tag-blue">Periodized</span>
+      <span class="tag tag-blue">Rotating formats</span>
+      <span class="tag tag-blue">Zone 2 base</span>
+    </div>
+    <div class="card card-accent5">
+      <h3>Mobility = Progressive Overload</h3>
+      <p style="font-size:0.85rem;">Flexibility is trained like strength — with increasing ROM, then load, then active control. Static holds forever don't produce structural change.</p>
+      <span class="tag">Loaded stretching</span>
+      <span class="tag">ROM overload</span>
+      <span class="tag">Active flexibility</span>
+    </div>
+    <div class="card card-accent3">
+      <h3>Sustainability = Architecture</h3>
+      <p style="font-size:0.85rem;">The system doesn't collapse when you miss days. Rolling A/B/C, autoregulation rules, and defined minimum doses make it resilient by design, not by willpower.</p>
+      <span class="tag tag-red">Autoregulation</span>
+      <span class="tag tag-red">Min effective dose</span>
+      <span class="tag tag-red">No punishment</span>
+    </div>
+    <div class="card">
+      <h3>Macrocycles = Longevity</h3>
+      <p style="font-size:0.85rem;">Every 12 weeks is a block. Blocks repeat with elevated baselines forever. This is how you train for years without plateau or boredom.</p>
+      <span class="tag">Acc → Int → Real</span>
+      <span class="tag">Baseline elevation</span>
+      <span class="tag">Annual planning</span>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    <p><strong>Core principle:</strong> You are building a system that produces 10 good years, not 10 great weeks. Every decision optimizes for consistency over intensity, and skill development over performance PR-chasing.</p>
+  </div>
+</section>
+
+<!-- 2. WEEKLY TEMPLATE -->
+<section id="template">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2>WEEKLY TRAINING TEMPLATE</h2>
+  </div>
+
+  <p>You train in a <strong>rolling A → B → C sequence</strong>. Days have no fixed weekday assignment. Miss a day — continue where you left off. Aim for 3–5 sessions per week. If spontaneous activity happens, insert it as a Zone 2 or mobility day and continue the sequence.</p>
+
+  <div class="rule-block">
+    <p><strong>Spontaneous activity rule:</strong> Any unplanned activity of 45+ min (hike, sport, yoga, cycling) counts as a conditioning or mobility day. Log it, continue the A/B/C sequence next session. No guilt. No "makeup" sessions.</p>
+  </div>
+
+  <h3>Session Tiers</h3>
+
+  <div class="card-grid card-grid-3" style="margin: 1.5rem 0;">
+    <div class="card">
+      <h4>MINIMUM — 30 MIN</h4>
+      <ul>
+        <li>5 min warm-up (dynamic only)</li>
+        <li>5 min skill practice</li>
+        <li>1 main compound lift — 3 sets</li>
+        <li>1 accessory — 2 sets</li>
+      </ul>
+      <p style="font-size:0.8rem; margin-top:0.8rem; color: var(--accent);">This session always counts. Never skip because you only have 30 min.</p>
+    </div>
+    <div class="card">
+      <h4>STANDARD — 45 MIN</h4>
+      <ul>
+        <li>8 min warm-up + mobility flow</li>
+        <li>8 min skill practice</li>
+        <li>20 min strength (2 lifts)</li>
+        <li>8 min conditioning or accessory</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>OPTIMAL — 60 MIN</h4>
+      <ul>
+        <li>10 min warm-up</li>
+        <li>10 min skill</li>
+        <li>30 min strength (3 lifts)</li>
+        <li>10 min accessory or intervals</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>The A / B / C Structure</h3>
+
+  <table>
+    <tr>
+      <th>Day</th>
+      <th>Focus</th>
+      <th>Main Lifts</th>
+      <th>Skill</th>
+      <th>Conditioning</th>
+    </tr>
+    <tr>
+      <td><strong>A</strong></td>
+      <td>Lower Body</td>
+      <td>Squat, RDL, Split Squat</td>
+      <td>Handstand</td>
+      <td>Optional short intervals</td>
+    </tr>
+    <tr>
+      <td><strong>B</strong></td>
+      <td>Upper Push</td>
+      <td>Bench/OHP, Weighted Dip</td>
+      <td>L-sit, Back Lever (skill only)</td>
+      <td>HIIT finisher (8–12 min)</td>
+    </tr>
+    <tr>
+      <td><strong>C</strong></td>
+      <td>Upper Pull</td>
+      <td>Weighted Pull-up, Row, Deadlift</td>
+      <td>Front Lever tuck holds — <em>low volume, fresh</em></td>
+      <td>None (save CNS)</td>
+    </tr>
+    <tr>
+      <td><strong>Z</strong></td>
+      <td>Zone 2 / Outdoor</td>
+      <td>—</td>
+      <td>Optional skill play</td>
+      <td>60–90 min bike/hike</td>
+    </tr>
+  </table>
+
+  <div class="rule-block blue">
+    <p><strong>Front lever note:</strong> Front lever practice on C day is placed at the START, before any pulling volume. Keep it to 4–5 sets of holds only. Once you begin heavy pulling, lever work is done for the session.</p>
+  </div>
+
+  <h3>Recommended Weekly Rhythm (Target)</h3>
+  <p style="color: var(--text2);">A → B → rest/Z → C → rest → A → B (then continue). In practice: just do the next letter when you train. The sequence self-corrects.</p>
+</section>
+
+<!-- 3. STRENGTH -->
+<section id="strength">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>STRENGTH PROGRAM</h2>
+  </div>
+
+  <p>Strength is the foundation of bone density, hormonal health, and calisthenics performance. We use double progression with clear entry points for your detrained state, and a macrocycle that evolves every block.</p>
+
+  <h3>Progression Model: Double Progression</h3>
+
+  <div class="rule-block">
+    <p><strong>Rule:</strong> Every lift has a rep range (e.g. 4×5–8). When all 4 sets hit the top of the range (8 reps) at RPE ≤ 8 → increase load next session (2.5–5kg lower body, 1.25–2.5kg upper). When you can't hit the bottom of the range (5 reps) → reduce load 10% and rebuild.</p>
+  </div>
+
+  <h3>Phase-by-Phase Lifting Protocol</h3>
+
+  <table>
+    <tr>
+      <th>Phase</th>
+      <th>Weeks</th>
+      <th>Sets × Reps</th>
+      <th>RPE</th>
+      <th>Load Start</th>
+      <th>Priority</th>
+    </tr>
+    <tr>
+      <td><strong>Phase 1 — Rebuild</strong></td>
+      <td>1–4</td>
+      <td>3–4 × 5–8</td>
+      <td>6–7</td>
+      <td>60–65% estimated 1RM</td>
+      <td>Motor pattern restoration, tendon tolerance</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 2 — Accumulate</strong></td>
+      <td>6–9</td>
+      <td>4 × 4–6</td>
+      <td>7–8</td>
+      <td>75–80% 1RM</td>
+      <td>Volume and strength building</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 3 — Intensify</strong></td>
+      <td>11–12</td>
+      <td>4–5 × 3–5</td>
+      <td>8–9</td>
+      <td>82–88% 1RM</td>
+      <td>Peak strength, bone loading</td>
+    </tr>
+    <tr>
+      <td><strong>Deload</strong></td>
+      <td>5, 10</td>
+      <td>3 × 5–8</td>
+      <td>5–6</td>
+      <td>50–60% 1RM</td>
+      <td>Recovery, movement practice</td>
+    </tr>
+  </table>
+
+  <h3>Lift Selection Per Day</h3>
+
+  <div class="card-grid card-grid-3" style="margin: 1.5rem 0;">
+    <div class="card card-accent">
+      <h4>DAY A — LOWER</h4>
+      <ul>
+        <li><strong>Primary:</strong> Back Squat (or Goblet → Front Squat progression)</li>
+        <li><strong>Hinge:</strong> Romanian Deadlift</li>
+        <li><strong>Accessory:</strong> Bulgarian Split Squat or Step-up</li>
+        <li><strong>Core:</strong> Ab wheel or hanging knee raise</li>
+      </ul>
+    </div>
+    <div class="card card-accent2">
+      <h4>DAY B — PUSH</h4>
+      <ul>
+        <li><strong>Primary:</strong> Barbell Bench Press</li>
+        <li><strong>Secondary:</strong> Overhead Press</li>
+        <li><strong>Accessory:</strong> Weighted Dips</li>
+        <li><strong>Core:</strong> L-sit holds</li>
+      </ul>
+    </div>
+    <div class="card card-accent4">
+      <h4>DAY C — PULL</h4>
+      <ul>
+        <li><strong>Primary:</strong> Weighted Pull-up</li>
+        <li><strong>Secondary:</strong> Barbell Row or Pendlay Row</li>
+        <li><strong>Hinge:</strong> Conventional Deadlift (alternates blocks with RDL)</li>
+        <li><strong>Accessory:</strong> Face pull or band pull-apart</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rule-block yellow">
+    <p><strong>Deadlift rotation:</strong> In odd blocks, deadlift is on C day as listed. In even blocks, move it to A day as the primary hinge and rotate RDL to C as accessory. This prevents adaptation and manages fatigue accumulation.</p>
+  </div>
+
+  <h3>12-Month Strength Benchmarks</h3>
+
+  <div class="kpi-grid">
+    <div class="kpi-item">
+      <span class="kpi-val">1.8×BW</span>
+      <span class="kpi-label">Back Squat (Month 6)</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">2.2×BW</span>
+      <span class="kpi-label">Deadlift (Month 12)</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">+50%BW</span>
+      <span class="kpi-label">Weighted Pull-up</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">1×BW</span>
+      <span class="kpi-label">Overhead Press</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">+70%BW</span>
+      <span class="kpi-label">Weighted Dip</span>
+    </div>
+  </div>
+
+  <h3>Bone Density Note</h3>
+  <p>Bone density responds to <strong>axial loading under high tension over time</strong>. Squats and deadlifts are the primary drivers. You need consistent progressive loading across months and years — deloads are critical because bone remodels during recovery, not during the lift. Consistency > heroic single sessions.</p>
+</section>
+
+<!-- 4. SKILLS -->
+<section id="skills">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>CALISTHENICS SKILL ROADMAP</h2>
+  </div>
+
+  <p>Each skill has a <strong>progression ladder with unlock gates</strong>. You must hit the gate criteria in <strong>3 consecutive sessions</strong> before advancing. If stalled for 2+ weeks, follow the stall protocol. Skills are practiced fresh, before strength work.</p>
+
+  <div class="rule-block">
+    <p><strong>Universal skill prescription:</strong> 3–5 sets per session. Stop 1–2 reps or 3–5 seconds before failure. Never train skills to exhaustion. Frequency 3–5×/week produces faster progress than 1–2×/week at higher intensity.</p>
+  </div>
+
+  <!-- HANDSTAND -->
+  <h3>🤸 Handstand</h3>
+  <p>Trained on <strong>A day + B day</strong> (5 days/week if you do Z days). Wall-based work transitions to freestanding over 3–6 months.</p>
+
+  <div class="ladder">
+    <div class="ladder-step">
+      <div class="ladder-num">1</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Wall Hold (Back to Wall)</div>
+        <div class="ladder-detail">5×30 sec → 5×60 sec | Focus: straight body line</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 5×60 sec, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">2</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Chest-to-Wall Alignment Hold</div>
+        <div class="ladder-detail">5×20 sec → 5×45 sec | Focus: active shoulders, hollow body</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 5×45 sec, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">3</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Wall Shoulder Taps</div>
+        <div class="ladder-detail">3×5 taps/side | Develops freestanding balance foundation</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 3×8/side smooth, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">4</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Freestanding Kick-up Attempts</div>
+        <div class="ladder-detail">5 min practice | Count total seconds held per session</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 3×5 sec freestanding, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">5</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Freestanding Handstand Hold</div>
+        <div class="ladder-detail">3×10 sec → 3×30 sec | KPI: 30 sec consistent hold</div>
+      </div>
+      <div class="ladder-unlock">KPI: 30 sec hold</div>
+    </div>
+  </div>
+
+  <div class="rule-block yellow" style="margin-top:1rem;">
+    <p><strong>Stall protocol:</strong> If you don't progress in 2 weeks, drop back one level and add 1 extra set. Wrist prep (circles, compression holds) is non-negotiable before handstand practice.</p>
+  </div>
+
+  <!-- FRONT LEVER -->
+  <h3>🔁 Front Lever</h3>
+  <p>Trained on <strong>C day only</strong>, at the START before any pulling. Front lever is the most demanding skill — protect it from fatigue.</p>
+
+  <div class="ladder">
+    <div class="ladder-step">
+      <div class="ladder-num">1</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Tuck Front Lever Hold</div>
+        <div class="ladder-detail">4×8–12 sec | Both knees to chest, horizontal hips</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 4×12 sec, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">2</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Advanced Tuck Front Lever</div>
+        <div class="ladder-detail">4×8–12 sec | Knees away from chest, back flat</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 4×12 sec, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">3</div>
+      <div class="ladder-content">
+        <div class="ladder-title">One-Leg Front Lever</div>
+        <div class="ladder-detail">4×8–10 sec | One leg extended, one tucked</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 4×10 sec, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">4</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Straddle Front Lever</div>
+        <div class="ladder-detail">4×6–10 sec | Both legs extended, straddle wide</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 4×10 sec, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">5</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Full Front Lever</div>
+        <div class="ladder-detail">3×5–8 sec | KPI: 10 sec clean hold</div>
+      </div>
+      <div class="ladder-unlock">KPI: 10 sec hold</div>
+    </div>
+  </div>
+
+  <!-- BACK LEVER -->
+  <h3>↩️ Back Lever</h3>
+  <p>Trained on <strong>B day</strong> (post-push, before conditioning). Easier entry point than front lever — good early win.</p>
+
+  <div class="ladder">
+    <div class="ladder-step">
+      <div class="ladder-num">1</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Skin the Cat</div>
+        <div class="ladder-detail">3×3–5 reps | Full ROM shoulder rotation, controlled</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 3×5 smooth, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">2</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Tuck Back Lever Hold</div>
+        <div class="ladder-detail">4×8–15 sec | Knees tucked, body horizontal</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 4×15 sec, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">3</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Advanced Tuck → Straddle → Full</div>
+        <div class="ladder-detail">Same progression logic as front lever | 4×10 sec each gate</div>
+      </div>
+      <div class="ladder-unlock">KPI: 10 sec full</div>
+    </div>
+  </div>
+
+  <!-- L-SIT -->
+  <h3>⬛ L-Sit</h3>
+  <p>Trained on <strong>B day</strong> (after main push work). Can be done on parallettes, dip bars, or floor.</p>
+
+  <div class="ladder">
+    <div class="ladder-step">
+      <div class="ladder-num">1</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Tuck Support Hold</div>
+        <div class="ladder-detail">5×10–20 sec | Both knees up, arms locked out, shoulders depressed</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 5×20 sec, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">2</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Single Leg Extension</div>
+        <div class="ladder-detail">5×10–15 sec each leg | One leg extended, one tucked</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 5×15 sec, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">3</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Full L-Sit</div>
+        <div class="ladder-detail">5×5 sec → 5×30 sec | Both legs extended, parallel to ground</div>
+      </div>
+      <div class="ladder-unlock">KPI: 30 sec L-sit</div>
+    </div>
+  </div>
+
+  <!-- HUMAN FLAG -->
+  <h3>🚩 Human Flag (Long-Term)</h3>
+  <p>Do not attempt until: 15+ strict pull-ups, 20+ sec side plank, strong oblique development. This is a Year 2 skill for most. Trained 1–2×/week only.</p>
+
+  <div class="ladder">
+    <div class="ladder-step">
+      <div class="ladder-num">P</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Prerequisites</div>
+        <div class="ladder-detail">15 strict pull-ups + 20 sec side plank + strong obliques from AB work</div>
+      </div>
+      <div class="ladder-unlock">Gate: all 3 met</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">1</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Vertical Pole Tuck Holds</div>
+        <div class="ladder-detail">3×5–10 sec | Horizontal intent, tuck position</div>
+      </div>
+      <div class="ladder-unlock">UNLOCK: 3×10 sec, 3 sessions</div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">2</div>
+      <div class="ladder-content">
+        <div class="ladder-title">Straddle Flag → Full Flag</div>
+        <div class="ladder-detail">3×5 sec each → build to 10 sec full | KPI: 5 sec clean hold</div>
+      </div>
+      <div class="ladder-unlock">KPI: 5 sec hold</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. VO2MAX -->
+<section id="cardio">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2>VO₂MAX & CONDITIONING</h2>
+  </div>
+
+  <p>Conditioning is periodized across blocks — you do not run the same intervals forever. Each 12-week block has a conditioning emphasis that rotates to prevent adaptation and burnout.</p>
+
+  <h3>Heart Rate Zones (Apple Watch)</h3>
+
+  <table>
+    <tr>
+      <th>Zone</th>
+      <th>% Max HR</th>
+      <th>BPM (Est. Max ~197)</th>
+      <th>Feel</th>
+      <th>Purpose</th>
+    </tr>
+    <tr>
+      <td><strong>Zone 1</strong></td>
+      <td>50–60%</td>
+      <td>99–118</td>
+      <td>Easy walk</td>
+      <td>Active recovery</td>
+    </tr>
+    <tr>
+      <td><strong>Zone 2</strong></td>
+      <td>60–70%</td>
+      <td>118–138</td>
+      <td>Can hold conversation</td>
+      <td>Aerobic base, fat metabolism, VO₂max base</td>
+    </tr>
+    <tr>
+      <td><strong>Zone 3</strong></td>
+      <td>70–80%</td>
+      <td>138–158</td>
+      <td>Harder to talk</td>
+      <td>Aerobic threshold, avoid as default</td>
+    </tr>
+    <tr>
+      <td><strong>Zone 4</strong></td>
+      <td>80–90%</td>
+      <td>158–177</td>
+      <td>Hard, short sentences</td>
+      <td>Lactate threshold, tempo work</td>
+    </tr>
+    <tr>
+      <td><strong>Zone 5</strong></td>
+      <td>90–100%</td>
+      <td>177–197</td>
+      <td>Max effort</td>
+      <td>VO₂max intervals</td>
+    </tr>
+  </table>
+
+  <h3>Conditioning Per Block</h3>
+
+  <div class="card-grid card-grid-3" style="margin:1.5rem 0;">
+    <div class="card card-accent">
+      <h4>BLOCK 1 — AEROBIC BASE</h4>
+      <p style="font-size:0.82rem;">2× Zone 2 (30–45 min) + 1× short intervals<br><br>
+      Intervals: 6–8 × 1 min Zone 4 / 2 min rest<br><br>
+      Mountain bike counts as Zone 2 if HR stays in range.</p>
+      <span class="tag tag-green">Weeks 1–4</span>
+    </div>
+    <div class="card card-accent2">
+      <h4>BLOCK 2 — VO₂MAX EMPHASIS</h4>
+      <p style="font-size:0.82rem;">1× Zone 2 (45–60 min) + 2× VO₂max intervals<br><br>
+      Intervals: 4–5 × 4 min Zone 5 / 3 min active rest<br><br>
+      Or: 10 × 1 min max / 1 min rest</p>
+      <span class="tag tag-yellow">Weeks 6–9</span>
+    </div>
+    <div class="card card-accent4">
+      <h4>BLOCK 3 — THRESHOLD</h4>
+      <p style="font-size:0.82rem;">1× Zone 2 + 1× tempo + 1× HIIT<br><br>
+      Tempo: 20–25 min continuous Zone 4<br>
+      HIIT: Hill sprints 8–10 × 20 sec all-out / 40 sec rest</p>
+      <span class="tag tag-blue">Weeks 11–12</span>
+    </div>
+  </div>
+
+  <h3>Mountain Bike Integration</h3>
+  <div class="rule-block">
+    <p>Mountain biking counts as Zone 2 if average HR stays 118–138. For hilly rides where HR spikes, count it as a mixed session and treat it as a conditioning day — skip the day's HIIT. Use Apple Watch to verify average HR post-ride.</p>
+  </div>
+
+  <h3>Conditioning KPIs</h3>
+  <div class="kpi-grid">
+    <div class="kpi-item">
+      <span class="kpi-val">+8%</span>
+      <span class="kpi-label">Apple Watch VO₂max (12 weeks)</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">−6 BPM</span>
+      <span class="kpi-label">Resting HR (12 weeks)</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">+2 reps</span>
+      <span class="kpi-label">4×4 intervals completed (Block 2)</span>
+    </div>
+  </div>
+</section>
+
+<!-- 6. MOBILITY -->
+<section id="mobility">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2>MOBILITY & FLEXIBILITY SYSTEM</h2>
+  </div>
+
+  <p>Mobility is trained with progressive overload — the same logic as lifting. You increase ROM, then add load, then develop active control. Passive stretching alone produces temporary change. This system produces structural change.</p>
+
+  <h3>Three-Phase Mobility Progression</h3>
+
+  <table>
+    <tr>
+      <th>Phase</th>
+      <th>Method</th>
+      <th>Example</th>
+      <th>Duration</th>
+    </tr>
+    <tr>
+      <td><strong>Phase 1</strong></td>
+      <td>Passive ROM + end-range holds</td>
+      <td>Pike stretch, couch stretch (60 sec holds)</td>
+      <td>Weeks 1–4</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 2</strong></td>
+      <td>Loaded stretching</td>
+      <td>Jefferson curl with weight, weighted pike</td>
+      <td>Weeks 5–9</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 3</strong></td>
+      <td>Active flexibility</td>
+      <td>Active leg raises, shrimp squat, active pancake</td>
+      <td>Weeks 10+</td>
+    </tr>
+  </table>
+
+  <h3>Daily Micro-Routine (5–10 min, non-negotiable)</h3>
+
+  <table>
+    <tr>
+      <th>Movement</th>
+      <th>Sets × Duration</th>
+      <th>Progression</th>
+    </tr>
+    <tr>
+      <td>Jefferson Curl</td>
+      <td>2 × 8 reps (slow)</td>
+      <td>Phase 1: bodyweight → Phase 2: +5–10kg → Phase 3: hold at end ROM 5 sec</td>
+    </tr>
+    <tr>
+      <td>Couch Stretch</td>
+      <td>1 × 60 sec/side</td>
+      <td>Phase 1: foot on wall → Phase 2: add hip thrust active → Phase 3: rear foot elevated split squat</td>
+    </tr>
+    <tr>
+      <td>Dead Hang</td>
+      <td>2–3 × 30–60 sec</td>
+      <td>Phase 1: passive → Phase 2: add active shoulder retraction → Phase 3: skin the cat</td>
+    </tr>
+    <tr>
+      <td>Deep Squat Hold</td>
+      <td>1–2 × 60 sec</td>
+      <td>Phase 1: assisted → Phase 2: unassisted → Phase 3: heels elevated removed</td>
+    </tr>
+  </table>
+
+  <h3>Weekly Mobility Session (30 min, 1×/week)</h3>
+
+  <div class="rule-block blue">
+    <p>Do this on a Z day, after a hike/bike, or as a standalone. Combine with yoga if you go spontaneously — that yoga session counts and replaces this.</p>
+  </div>
+
+  <ul style="margin: 1rem 0;">
+    <li>Loaded pancake stretch (3 × 60 sec with gentle forward lean)</li>
+    <li>Pigeon pose with hip circles (2 min/side)</li>
+    <li>Thoracic rotation on foam roller (2 × 10/side)</li>
+    <li>Wall shoulder flexion (2 × 60 sec)</li>
+    <li>Straddle Jefferson curl (light, 3 × 8)</li>
+    <li>PNF hamstring stretch (3 × 6 sec contract / 20 sec relax/side)</li>
+  </ul>
+
+  <h3>Flexibility Benchmarks</h3>
+
+  <div class="kpi-grid">
+    <div class="kpi-item">
+      <span class="kpi-val">Palms</span>
+      <span class="kpi-label">Flat on floor (Month 4–6)</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">90 sec</span>
+      <span class="kpi-label">Deep squat hold unassisted</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">Full OH</span>
+      <span class="kpi-label">Shoulder flexion, no rib flare</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">Straddle</span>
+      <span class="kpi-label">Chest to floor (Year 2)</span>
+    </div>
+  </div>
+</section>
+
+<!-- 7. TRACKING -->
+<section id="tracking">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2>TRACKING & METRICS SYSTEM</h2>
+  </div>
+
+  <p>Track the minimum that tells you the most. One Google Sheet. Weekly check-in takes 5 minutes. Monthly benchmark day takes 20 minutes and gives you everything you need to make decisions.</p>
+
+  <h3>What to Track vs. Ignore</h3>
+
+  <div class="card-grid card-grid-2" style="margin: 1.5rem 0;">
+    <div class="card card-accent">
+      <h4>✓ TRACK THESE</h4>
+      <ul>
+        <li>Lift: weight × reps per session (per main lift)</li>
+        <li>Skill: hold time in seconds + progression level (1–5)</li>
+        <li>VO₂max estimate (Apple Watch — check monthly)</li>
+        <li>Resting HR (Apple Watch — check weekly)</li>
+        <li>Flexibility: toe touch distance (cm from floor)</li>
+        <li>Sessions completed per week (count, not type)</li>
+      </ul>
+    </div>
+    <div class="card card-accent3">
+      <h4>✗ IGNORE THESE</h4>
+      <ul>
+        <li>Calories burned (irrelevant to your goals)</li>
+        <li>Daily bodyweight fluctuations</li>
+        <li>Apple "Move/Exercise minutes"</li>
+        <li>HRV (useful but adds complexity — skip for now)</li>
+        <li>Individual session RPE scores (too granular)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Google Sheet Structure</h3>
+
+  <div class="sheet-preview">
+    <p style="font-size:0.72rem; color: var(--text3); margin-bottom:1rem; font-family: 'DM Mono', monospace;">TAB 1: SESSION LOG</p>
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Day Type</th>
+        <th>Lift 1 (kg × reps)</th>
+        <th>Lift 2 (kg × reps)</th>
+        <th>Skill (sec)</th>
+        <th>Notes</th>
+      </tr>
+      <tr>
+        <td>2024-03-01</td>
+        <td>A</td>
+        <td>Squat 80 × 6,6,6,7</td>
+        <td>RDL 70 × 8,8,8</td>
+        <td>HS wall 45s</td>
+        <td>Felt strong</td>
+      </tr>
+      <tr>
+        <td>2024-03-03</td>
+        <td>B</td>
+        <td>Bench 75 × 6,7,7,8</td>
+        <td>OHP 45 × 6,6,7</td>
+        <td>L-sit 12s</td>
+        <td>Shoulders tight</td>
+      </tr>
+    </table>
+    <p style="font-size:0.72rem; color: var(--text3); margin: 1.5rem 0 0.5rem; font-family: 'DM Mono', monospace;">TAB 2: WEEKLY DASHBOARD</p>
+    <table>
+      <tr>
+        <th>Week</th>
+        <th>Sessions</th>
+        <th>Strength ↑?</th>
+        <th>Skill ↑?</th>
+        <th>VO₂ Stim?</th>
+        <th>Mobility 5+?</th>
+        <th>Week Score</th>
+      </tr>
+      <tr>
+        <td>W1</td>
+        <td>4</td>
+        <td>✓</td>
+        <td>✓</td>
+        <td>✓</td>
+        <td>✓</td>
+        <td>4/4 ✓</td>
+      </tr>
+    </table>
+  </div>
+
+  <h3>Monthly Benchmark Day</h3>
+
+  <div class="rule-block">
+    <p>Every 4 weeks (on deload week), perform these tests and log them in a separate "Benchmarks" tab. This is how you verify the system is working and make decisions about the next block.</p>
+  </div>
+
+  <table>
+    <tr>
+      <th>Test</th>
+      <th>Method</th>
+      <th>Log</th>
+    </tr>
+    <tr>
+      <td>Max pull-ups (strict)</td>
+      <td>1 set to failure</td>
+      <td>Number</td>
+    </tr>
+    <tr>
+      <td>Max push-ups</td>
+      <td>1 set to failure</td>
+      <td>Number</td>
+    </tr>
+    <tr>
+      <td>Squat estimated 1RM</td>
+      <td>Work up to heavy 3 rep set, calculate</td>
+      <td>kg</td>
+    </tr>
+    <tr>
+      <td>Handstand hold time</td>
+      <td>Best of 3 attempts</td>
+      <td>Seconds</td>
+    </tr>
+    <tr>
+      <td>Front lever hold time</td>
+      <td>Best of 3 at current level</td>
+      <td>Seconds + level</td>
+    </tr>
+    <tr>
+      <td>Toe touch</td>
+      <td>Standing forward fold, measure distance from fingertips to floor</td>
+      <td>cm (negative = past floor)</td>
+    </tr>
+    <tr>
+      <td>VO₂max estimate</td>
+      <td>Apple Watch reading</td>
+      <td>ml/kg/min</td>
+    </tr>
+    <tr>
+      <td>Resting HR</td>
+      <td>Apple Watch 7-day average</td>
+      <td>BPM</td>
+    </tr>
+  </table>
+</section>
+
+<!-- 8. SUSTAINABILITY -->
+<section id="sustainability">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2>SUSTAINABILITY SYSTEM</h2>
+  </div>
+
+  <p>This is the section that determines whether the system lasts 12 weeks or 12 years. Read it as carefully as the strength programming.</p>
+
+  <h3>Decision Rules by Situation</h3>
+
+  <div class="auto-grid">
+    <div class="auto-cell">
+      <div class="auto-condition">Only have 30 min</div>
+      <div class="auto-action">Skill 5 min → Main lift 3×5 → Out. Session complete. Never skip because time is short.</div>
+    </div>
+    <div class="auto-cell">
+      <div class="auto-condition">Low motivation</div>
+      <div class="auto-action">Start. Commit to 10 minutes only. Permission to stop after. Most sessions proceed normally once started.</div>
+    </div>
+    <div class="auto-cell">
+      <div class="auto-condition">After 1 week off</div>
+      <div class="auto-action">Resume the sequence. Reduce loads 10–15%. No punishment sessions. No "catch-up." Continue as if week 1 of a new mini-block.</div>
+    </div>
+    <div class="auto-cell">
+      <div class="auto-condition">After 2–3 weeks off</div>
+      <div class="auto-action">Treat as deload week. 60% loads, all movements. Then rebuild from Phase 1 RPE targets for 2 weeks before normal progression.</div>
+    </div>
+    <div class="auto-cell">
+      <div class="auto-condition">Spontaneous hike / sport / yoga</div>
+      <div class="auto-action">Count it. Log it as Z day. Continue A/B/C sequence next training session. Never a "lost day."</div>
+    </div>
+    <div class="auto-cell">
+      <div class="auto-condition">Feel great, want more</div>
+      <div class="auto-action">Add one top set at RPE 8–9 on the main lift. Do not add extra sessions. Recovery is where gains are made.</div>
+    </div>
+  </div>
+
+  <h3>Autoregulation: Sleep & Stress</h3>
+
+  <table>
+    <tr>
+      <th>Condition</th>
+      <th>Adjustment</th>
+    </tr>
+    <tr>
+      <td>Sleep ≥7 hrs, stress ≤5/10</td>
+      <td><strong>Green light.</strong> Train as programmed. Optional: add top set if feeling strong.</td>
+    </tr>
+    <tr>
+      <td>Sleep 6–7 hrs OR stress 6–7/10</td>
+      <td><strong>Yellow light.</strong> Train as programmed, drop RPE target by 1. Remove HIIT finisher. Keep skill work.</td>
+    </tr>
+    <tr>
+      <td>Sleep &lt;6 hrs OR stress ≥8/10</td>
+      <td><strong>Red light.</strong> Skill + 1 main lift only. No conditioning. OR replace with 30 min Zone 1 walk + daily mobility.</td>
+    </tr>
+    <tr>
+      <td>Sick (any symptoms)</td>
+      <td><strong>Full rest.</strong> Daily mobility only. Return to training when symptom-free for 48 hrs.</td>
+    </tr>
+  </table>
+
+  <div class="rule-block yellow">
+    <p><strong>Anti-burnout structure:</strong> Deload weeks are mandatory, not optional. Intensity drops on week 5 and 10 regardless of how you feel. The purpose of a deload is not because you're tired — it's to prevent you from needing to be tired to take one.</p>
+  </div>
+
+  <h3>Burnout Prevention Rules</h3>
+  <ul style="margin: 1rem 0;">
+    <li>Never do HIIT two days in a row</li>
+    <li>Never do skill work post-strength failure sets</li>
+    <li>3 high-intensity sessions per week is the absolute maximum</li>
+    <li>If resting HR rises 5+ BPM above your baseline for 3+ days: take 2 full rest days, reduce next week's load by 20%</li>
+    <li>Deload weeks are not optional — they are structural</li>
+  </ul>
+</section>
+
+<!-- 9. MACRO CYCLE -->
+<section id="macro">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2>MACRO CYCLE: INDEFINITELY SCALABLE</h2>
+  </div>
+
+  <p>This is the piece that makes the system last years, not weeks. Every 12-week block follows the same structure but begins from an elevated baseline. Blocks accumulate. You never "start over" — you rebuild from a higher floor.</p>
+
+  <h3>The Repeating Block Structure</h3>
+
+  <div class="timeline" style="margin: 2rem 0;">
+    <div class="timeline-item">
+      <div class="timeline-label">WEEKS 1–4</div>
+      <div class="timeline-title">ACCUMULATION</div>
+      <p>Higher volume, moderate intensity. Phase 1 programming (3–4×5–8 @ RPE 6–7). Conditioning: aerobic base emphasis. Skill: establish or rebuild current progression level.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-label">WEEK 5</div>
+      <div class="timeline-title">DELOAD</div>
+      <p>30–40% volume reduction. Keep movement quality. Benchmark day. Assess: what level did each skill reach? What did strength add? Plan next block's starting loads.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-label">WEEKS 6–9</div>
+      <div class="timeline-title">INTENSIFICATION</div>
+      <p>Lower volume, higher intensity. Phase 2 programming (4×4–6 @ RPE 7–8). Conditioning: VO₂max interval emphasis. Skill: advance one level if gates were met.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-label">WEEK 10</div>
+      <div class="timeline-title">DELOAD</div>
+      <p>Same as week 5. Second benchmark day of the block.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-label">WEEKS 11–12</div>
+      <div class="timeline-title">REALIZATION</div>
+      <p>Peak performance expression. Phase 3 programming (4–5×3–5 @ RPE 8–9). Conditioning: mixed HIIT/threshold. Skill: consolidate level gains. Test PRs where appropriate.</p>
+    </div>
+  </div>
+
+  <div class="rule-block">
+    <p><strong>How blocks evolve:</strong> After each 12-week block, your starting loads for the next block are your Phase 3 working weights minus 10%. Your skill progression picks up where it left off. Conditioning format rotates (Block 1 aerobic → Block 2 VO₂max → Block 3 threshold → repeat). This is how you train for years without plateau.</p>
+  </div>
+
+  <h3>Year 1 Road Map</h3>
+
+  <table>
+    <tr>
+      <th>Block</th>
+      <th>Weeks</th>
+      <th>Strength Focus</th>
+      <th>Conditioning</th>
+      <th>Skill Priority</th>
+      <th>Expected Outcomes</th>
+    </tr>
+    <tr>
+      <td><strong>Block 1</strong></td>
+      <td>1–12</td>
+      <td>Rebuild motor patterns, 60→80% 1RM</td>
+      <td>Aerobic base</td>
+      <td>Wall HS, Tuck lever, L-sit</td>
+      <td>+15% strength, 12 pull-ups, Wall HS 45 sec, tuck lever 12 sec</td>
+    </tr>
+    <tr>
+      <td><strong>Block 2</strong></td>
+      <td>13–24</td>
+      <td>Accumulate volume at 75–85%</td>
+      <td>VO₂max intervals</td>
+      <td>Chest-to-wall HS, Adv. tuck lever, Full L-sit</td>
+      <td>Squat 1.5× BW, VO₂max +8%, 15 sec freestanding HS attempts</td>
+    </tr>
+    <tr>
+      <td><strong>Block 3</strong></td>
+      <td>25–36</td>
+      <td>Intensify to 82–88%</td>
+      <td>Threshold + HIIT mix</td>
+      <td>Freestanding HS, One-leg lever, Back lever advanced tuck</td>
+      <td>Squat 1.8×BW, Deadlift 2×BW, 10 sec freestanding HS, straddle lever</td>
+    </tr>
+    <tr>
+      <td><strong>Block 4+</strong></td>
+      <td>37+</td>
+      <td>Maintain + peak</td>
+      <td>Rotate all 3</td>
+      <td>30 sec HS, full front lever, human flag prep</td>
+      <td>All Year 1 strength benchmarks. Human flag prerequisites met.</td>
+    </tr>
+  </table>
+
+  <h3>Realistic 12-Week Outcomes (Block 1)</h3>
+
+  <div class="kpi-grid">
+    <div class="kpi-item">
+      <span class="kpi-val">12–15</span>
+      <span class="kpi-label">Strict Pull-ups</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">45 sec</span>
+      <span class="kpi-label">Wall Handstand</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">Adv. Tuck</span>
+      <span class="kpi-label">Front Lever Level</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">+8%</span>
+      <span class="kpi-label">Apple Watch VO₂max</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">10 cm</span>
+      <span class="kpi-label">Closer to Floor</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-val">+15%</span>
+      <span class="kpi-label">Strength (all lifts)</span>
+    </div>
+  </div>
+</section>
+
+<!-- 10. SAMPLE WEEK -->
+<section id="week">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <h2>SAMPLE WEEK — BLOCK 1, WEEK 2</h2>
+  </div>
+
+  <p>This is a realistic 45–60 minute week. Loads are illustrative — adjust to your actual Week 1 test session numbers. Sequence shown as Monday–Sunday for clarity but remember: use the rolling system, not weekday assignments.</p>
+
+  <!-- DAY A -->
+  <div class="day-block">
+    <div class="day-header">
+      <div class="day-letter">A</div>
+      <div>
+        <div class="day-name">LOWER BODY — MONDAY</div>
+        <div style="font-size:0.72rem; color: var(--text3); font-family: 'DM Mono', monospace;">Squat Pattern + Handstand Practice</div>
+      </div>
+      <div class="day-duration">~55 min</div>
+    </div>
+    <div class="day-body">
+      <div class="section-divider">WARM-UP (8 min)</div>
+      <div class="exercise-row">
+        <div class="exercise-header">MOVEMENT</div>
+        <div class="exercise-header">SETS</div>
+        <div class="exercise-header">REPS / TIME</div>
+        <div class="exercise-header">NOTE</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Hip circle + leg swing</div>
+        <div class="exercise-sets">1</div>
+        <div class="exercise-reps">10/side</div>
+        <div class="exercise-note">Dynamic</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Goblet squat hold</div>
+        <div class="exercise-sets">2</div>
+        <div class="exercise-reps">30 sec</div>
+        <div class="exercise-note">Deep position</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Couch stretch</div>
+        <div class="exercise-sets">1</div>
+        <div class="exercise-reps">60 sec/side</div>
+        <div class="exercise-note">Daily mobility</div>
+      </div>
+      <div class="section-divider">SKILL (8 min)</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Wall handstand hold (back to wall)</div>
+        <div class="exercise-sets">4</div>
+        <div class="exercise-reps">30–45 sec</div>
+        <div class="exercise-note">Level 1 — perfect line</div>
+      </div>
+      <div class="section-divider">STRENGTH (30 min)</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Back Squat</div>
+        <div class="exercise-sets">4</div>
+        <div class="exercise-reps">6 reps</div>
+        <div class="exercise-note">RPE 6–7 | ~70% 1RM</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Romanian Deadlift</div>
+        <div class="exercise-sets">3</div>
+        <div class="exercise-reps">8 reps</div>
+        <div class="exercise-note">Slow eccentric (3 sec)</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Bulgarian Split Squat</div>
+        <div class="exercise-sets">3</div>
+        <div class="exercise-reps">8/side</div>
+        <div class="exercise-note">Bodyweight or light DB</div>
+      </div>
+      <div class="section-divider">FINISHER + MOBILITY (5 min)</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Jefferson curl</div>
+        <div class="exercise-sets">2</div>
+        <div class="exercise-reps">8 reps</div>
+        <div class="exercise-note">Bodyweight, slow</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Pike stretch hold</div>
+        <div class="exercise-sets">1</div>
+        <div class="exercise-reps">90 sec</div>
+        <div class="exercise-note">Measure distance to floor</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY B -->
+  <div class="day-block">
+    <div class="day-header">
+      <div class="day-letter">B</div>
+      <div>
+        <div class="day-name">UPPER PUSH — WEDNESDAY</div>
+        <div style="font-size:0.72rem; color: var(--text3); font-family: 'DM Mono', monospace;">Push Strength + L-sit + Back Lever + HIIT</div>
+      </div>
+      <div class="day-duration">~60 min</div>
+    </div>
+    <div class="day-body">
+      <div class="section-divider">WARM-UP (8 min)</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Band pull-apart + shoulder circles</div>
+        <div class="exercise-sets">2</div>
+        <div class="exercise-reps">15 reps</div>
+        <div class="exercise-note">Shoulder prep</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Dead hang</div>
+        <div class="exercise-sets">2</div>
+        <div class="exercise-reps">30 sec</div>
+        <div class="exercise-note">Passive decompression</div>
+      </div>
+      <div class="section-divider">SKILL (10 min)</div>
+      <div class="exercise-row">
+        <div class="exercise-name">L-sit tuck hold</div>
+        <div class="exercise-sets">5</div>
+        <div class="exercise-reps">15 sec</div>
+        <div class="exercise-note">Parallettes or dip bars</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Skin the cat (back lever prep)</div>
+        <div class="exercise-sets">3</div>
+        <div class="exercise-reps">4 reps</div>
+        <div class="exercise-note">Controlled, full ROM</div>
+      </div>
+      <div class="section-divider">STRENGTH (28 min)</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Barbell Bench Press</div>
+        <div class="exercise-sets">4</div>
+        <div class="exercise-reps">6–8 reps</div>
+        <div class="exercise-note">RPE 6–7</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Overhead Press</div>
+        <div class="exercise-sets">3</div>
+        <div class="exercise-reps">6 reps</div>
+        <div class="exercise-note">Full OH range</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Weighted Dips (or BW)</div>
+        <div class="exercise-sets">3</div>
+        <div class="exercise-reps">6–8 reps</div>
+        <div class="exercise-note">Control the descent</div>
+      </div>
+      <div class="section-divider">CONDITIONING (10 min)</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Intervals: 1 min effort / 1 min rest</div>
+        <div class="exercise-sets">6</div>
+        <div class="exercise-reps">1 min</div>
+        <div class="exercise-note">Bike sprint / row / assault bike — Zone 4</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY C -->
+  <div class="day-block">
+    <div class="day-header">
+      <div class="day-letter">C</div>
+      <div>
+        <div class="day-name">UPPER PULL — FRIDAY</div>
+        <div style="font-size:0.72rem; color: var(--text3); font-family: 'DM Mono', monospace;">Front Lever First → Pull Strength — No Conditioning</div>
+      </div>
+      <div class="day-duration">~55 min</div>
+    </div>
+    <div class="day-body">
+      <div class="section-divider">WARM-UP (8 min)</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Cat-cow + thoracic rotation</div>
+        <div class="exercise-sets">1</div>
+        <div class="exercise-reps">10/side</div>
+        <div class="exercise-note">Spine prep</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Dead hang</div>
+        <div class="exercise-sets">2</div>
+        <div class="exercise-reps">45 sec</div>
+        <div class="exercise-note">Shoulder warm-up</div>
+      </div>
+      <div class="section-divider">SKILL — FRONT LEVER (10 min) — FRESH</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Tuck front lever hold</div>
+        <div class="exercise-sets">5</div>
+        <div class="exercise-reps">8–10 sec</div>
+        <div class="exercise-note">Log time. Stop before form breaks.</div>
+      </div>
+      <div class="section-divider">STRENGTH (30 min)</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Weighted Pull-up (or BW)</div>
+        <div class="exercise-sets">4</div>
+        <div class="exercise-reps">5–8 reps</div>
+        <div class="exercise-note">RPE 6–7, full ROM</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Barbell Row (Pendlay)</div>
+        <div class="exercise-sets">3</div>
+        <div class="exercise-reps">8 reps</div>
+        <div class="exercise-note">Horizontal pull</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Conventional Deadlift</div>
+        <div class="exercise-sets">3</div>
+        <div class="exercise-reps">5 reps</div>
+        <div class="exercise-note">RPE 6–7 | Axial load for bone density</div>
+      </div>
+      <div class="exercise-row">
+        <div class="exercise-name">Face Pull</div>
+        <div class="exercise-sets">2</div>
+        <div class="exercise-reps">15 reps</div>
+        <div class="exercise-note">Shoulder health</div>
+      </div>
+      <div class="section-divider">MOBILITY (5 min)</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Jefferson curl</div>
+        <div class="exercise-sets">2</div>
+        <div class="exercise-reps">8 reps</div>
+        <div class="exercise-note">Slow, spinal decompression</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY Z -->
+  <div class="day-block">
+    <div class="day-header">
+      <div class="day-letter">Z</div>
+      <div>
+        <div class="day-name">ZONE 2 / OUTDOOR — SUNDAY</div>
+        <div style="font-size:0.72rem; color: var(--text3); font-family: 'DM Mono', monospace;">Mountain Bike or Hike — Optional Skill Play</div>
+      </div>
+      <div class="day-duration">75–90 min</div>
+    </div>
+    <div class="day-body">
+      <div class="section-divider">ZONE 2 SESSION</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Mountain bike ride</div>
+        <div class="exercise-sets">—</div>
+        <div class="exercise-reps">60–75 min</div>
+        <div class="exercise-note">Avg HR 118–138. Conversational pace.</div>
+      </div>
+      <div class="section-divider">OPTIONAL — if near park bars</div>
+      <div class="exercise-row">
+        <div class="exercise-name">Handstand practice (casual)</div>
+        <div class="exercise-sets">3–4</div>
+        <div class="exercise-reps">30 sec attempts</div>
+        <div class="exercise-note">Playful, no pressure</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top: 2rem;">
+    <p><strong>Missed Wednesday (Day B)?</strong> Do it Thursday. Missed Thursday? Do B on Saturday. The A/B/C letter is what matters — not the weekday. Your weekly structure never "breaks."</p>
+  </div>
+
+  <h3>Session Time Summary</h3>
+
+  <table>
+    <tr>
+      <th>Day</th>
+      <th>30-min Version</th>
+      <th>45-min Version</th>
+      <th>60-min Version</th>
+    </tr>
+    <tr>
+      <td><strong>A (Lower)</strong></td>
+      <td>Squat + RDL only, HS practice</td>
+      <td>Full strength, HS, pike stretch</td>
+      <td>Full + split squat + Jefferson curl</td>
+    </tr>
+    <tr>
+      <td><strong>B (Push)</strong></td>
+      <td>Bench + OHP, L-sit</td>
+      <td>Full push, L-sit, skin the cat</td>
+      <td>Full + intervals finisher</td>
+    </tr>
+    <tr>
+      <td><strong>C (Pull)</strong></td>
+      <td>Front lever + Pull-ups + rows</td>
+      <td>Full pull + deadlift, lever</td>
+      <td>Full + face pull + mobility</td>
+    </tr>
+    <tr>
+      <td><strong>Z (Cardio)</strong></td>
+      <td>30 min easy bike / walk</td>
+      <td>45 min Zone 2</td>
+      <td>75–90 min outdoor</td>
+    </tr>
+  </table>
+</section>
+
+<!-- FOOTER -->
+<div style="border-top: 1px solid var(--line); padding: 3rem 2rem; max-width: 1100px; margin: 0 auto;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: gap; gap: 2rem;">
+    <div>
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--text); letter-spacing: 0.06em; line-height: 1;">HYBRID ATHLETE OS</div>
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--text3); letter-spacing: 0.1em; margin-top: 0.5rem;">VERSION 2.0 — INDEFINITELY SCALABLE</div>
+    </div>
+    <div style="text-align: right;">
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--text3); letter-spacing: 0.08em;">WEEKLY MINIMUM: 3 SESSIONS</div>
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--text3); letter-spacing: 0.08em; margin-top: 0.3rem;">OPTIMAL: 4–5 SESSIONS + 1 OUTDOOR</div>
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--accent); letter-spacing: 0.08em; margin-top: 0.3rem;">RULE: NEVER MISS THE NEXT SESSION</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

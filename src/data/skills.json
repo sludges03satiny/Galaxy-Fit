@@ -1,0 +1,1497 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "sources": [
+      "Overcoming Gravity 2nd Edition \u2013 Steven Low (primary authority)",
+      "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness",
+      "The Calisthenics Skill Tree template v1.6.1"
+    ],
+    "notes": "Where sources conflict, Overcoming Gravity 2nd Ed is the authority. Progression levels: 1=Beginner, 2=Novice, 3=Intermediate, 4=Advanced, 5=Elite.",
+    "terminal_nodes": {
+      "handstand_tree": "freestanding-handstand",
+      "front_lever_tree": "front-lever",
+      "back_lever_tree": "back-lever",
+      "l_sit_tree": "l-sit",
+      "human_flag_tree": "human-flag",
+      "planche_tree": "planche",
+      "muscle_up_tree": "muscle-up",
+      "hspu_tree": "freestanding-hspu",
+      "pistol_squat_tree": "pistol-squat",
+      "dragon_flag_tree": "dragon-flag",
+      "nordic_curl_tree": "nordic-curl"
+    },
+    "session_generator_note": "The terminal handstand node is 'freestanding-handstand' (not 'handstand'). The skill selector and session generator must reference 'freestanding-handstand' as the handstand tree goal node. Intermediate nodes (chest-to-wall-handstand, wall-shoulder-taps, kickup-attempts) feed the session accessory slot while the athlete progresses toward it."
+  },
+  "nodes": [
+    {
+      "id": "dead-hang",
+      "name": "Dead Hang",
+      "category": "prerequisite",
+      "description": "Passive hang from a bar with both hands, full arm extension, relaxed shoulders. Foundation for all pulling and lever work \u2014 also conditions tendons and connective tissue.",
+      "prerequisites": [],
+      "strength_prerequisites": [],
+      "progression_level": 1,
+      "unlock_criteria": {
+        "hold_seconds": 30,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Bar hang with active shoulder depression",
+        "Wrist flexor stretches",
+        "Shoulder shrugs in hang"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B",
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "dead hang form tutorial calisthenics scapular",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "arch-hang",
+      "name": "Arch Hang",
+      "category": "prerequisite",
+      "description": "Active hang with a slight arch in the body and depressed, retracted scapulae. Teaches the active shoulder position required for pull-up and lever progressions.",
+      "prerequisites": [
+        "dead-hang"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 1,
+      "unlock_criteria": {
+        "hold_seconds": 30,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Scapular shrugs in hang",
+        "Band-assisted arch hang",
+        "Dead hang to arch hang transitions"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "arch hang scapular pull tutorial bodyweight bar",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "scapular-pull",
+      "name": "Scapular Pull",
+      "category": "prerequisite",
+      "description": "From a dead hang, depress and retract the scapulae without bending the elbows. Builds foundational scapular strength and body awareness for all pulling skills.",
+      "prerequisites": [
+        "dead-hang"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 1,
+      "unlock_criteria": {
+        "reps": 10,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Band pull-aparts",
+        "Face pulls",
+        "Prone Y-raises"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "scapular pull tutorial calisthenics bar hang depression",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "support-hold",
+      "name": "Support Hold",
+      "category": "prerequisite",
+      "description": "Top position of a dip hold on parallel bars or rings with arms fully locked and shoulders depressed. Foundation for all pushing and dip-based skills.",
+      "prerequisites": [],
+      "strength_prerequisites": [],
+      "progression_level": 1,
+      "unlock_criteria": {
+        "hold_seconds": 30,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Parallel bar support hold",
+        "Ring support hold",
+        "Shoulder depression drills"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "support hold parallel bars rings shoulder depression",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "hollow-body",
+      "name": "Hollow Body Hold",
+      "category": "prerequisite",
+      "description": "Supine position with lower back pressed flat, arms overhead, legs raised \u2014 creating a rigid hollow shape. The universal body tension pattern underlying all calisthenics skills.",
+      "prerequisites": [],
+      "strength_prerequisites": [],
+      "progression_level": 1,
+      "unlock_criteria": {
+        "hold_seconds": 30,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Tuck hollow body hold",
+        "One-leg-extended hollow hold",
+        "Hollow body rocks"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "B",
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "hollow body hold tutorial gymnastics progression core",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "german-hang",
+      "name": "German Hang",
+      "category": "prerequisite",
+      "description": "Hanging inverted from a bar with arms behind the body in shoulder flexion. Entry point for skin the cat and the back lever series; conditions shoulder flexibility and joint tolerance.",
+      "prerequisites": [
+        "dead-hang"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 1,
+      "unlock_criteria": {
+        "hold_seconds": 20,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Passive German hang with feet on ground",
+        "Band-assisted German hang",
+        "Shoulder flexion mobility drills"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "german hang tutorial skin the cat shoulder flexibility bar",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "tuck-skin-the-cat",
+      "name": "Tuck Skin the Cat",
+      "category": "prerequisite",
+      "description": "Rotating from a dead hang through an inverted tuck into a German hang and back. Builds shoulder flexion range and the pulling strength base for back lever.",
+      "prerequisites": [
+        "german-hang",
+        "dead-hang"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 1,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Slow tuck skin the cat negatives",
+        "German hang holds",
+        "Band-assisted transitions"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "skin the cat tuck tutorial bar rings beginner rotation",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "pike-skin-the-cat",
+      "name": "Pike Skin the Cat",
+      "category": "prerequisite",
+      "description": "Skin the cat with straight legs in a pike position, requiring greater shoulder flexibility and hamstring length. Direct prerequisite to the back lever.",
+      "prerequisites": [
+        "tuck-skin-the-cat"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Straddle skin the cat",
+        "Advanced tuck skin the cat",
+        "Hanging knee raises for shoulder flexibility"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "skin the cat straight leg pike progression advanced bar",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "l-hang",
+      "name": "L-Hang",
+      "category": "prerequisite",
+      "description": "Hanging from a bar with legs raised to 90 degrees, parallel to the floor. Builds hip flexor and abdominal compression strength for L-sit, front lever, and muscle-up.",
+      "prerequisites": [
+        "dead-hang",
+        "scapular-pull"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "hold_seconds": 15,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Hanging knee raises",
+        "Tuck L-hang holds",
+        "Partial L-hang with bent knees"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "L hang tutorial hanging leg raise compression hip flexor",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "planche-lean",
+      "name": "Planche Lean",
+      "category": "prerequisite",
+      "description": "Push-up position with hands at hips, leaning forward so shoulders are well ahead of wrists. Develops straight-arm pushing strength and wrist conditioning required for planche.",
+      "prerequisites": [
+        "support-hold",
+        "hollow-body"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "hold_seconds": 30,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Pseudo planche push-ups",
+        "Wrist conditioning circles",
+        "Shoulder protraction drills"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "planche lean tutorial straight arm strength wrist conditioning",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "wall-handstand",
+      "name": "Wall Handstand",
+      "category": "balance",
+      "description": "Handstand performed with heels against a wall for support. Builds vertical pressing strength, overhead stability, and wrist tolerance before freestanding work.",
+      "prerequisites": [
+        "hollow-body",
+        "support-hold"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 1,
+      "unlock_criteria": {
+        "hold_seconds": 60,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Wall plank (facing wall, nose-to-wall drill)",
+        "Pike push-ups",
+        "Wall shoulder taps"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "wall handstand tutorial beginner form alignment nose to wall",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "chest-to-wall-handstand",
+      "name": "Chest-to-Wall Handstand",
+      "category": "balance",
+      "description": "Handstand performed facing the wall with chest close to the surface. Trains proper stacked alignment (hips over shoulders over wrists) rather than the banana shape common in heel-to-wall work.",
+      "prerequisites": [
+        "wall-handstand"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "hold_seconds": 30,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Wall plank nose-to-wall build-up",
+        "Pike push-up with hollow body",
+        "Wrist mobility circles"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "chest to wall handstand tutorial alignment nose to wall",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "wall-shoulder-taps",
+      "name": "Wall Handstand Shoulder Taps",
+      "category": "balance",
+      "description": "In a chest-to-wall handstand, shift weight onto one hand and briefly tap the opposite shoulder. Develops the unilateral balance and midline stability needed for freestanding work.",
+      "prerequisites": [
+        "chest-to-wall-handstand"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "reps": 10,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Chest-to-wall handstand holds",
+        "One-arm wall handstand shifts",
+        "Hollow body holds"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "wall handstand shoulder taps tutorial balance shift",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "kickup-attempts",
+      "name": "Freestanding Kick-Up Attempts",
+      "category": "balance",
+      "description": "Repeated freestanding kick-up attempts aiming to find and hold balance away from the wall. Trains the proprioceptive control and fingertip pressure management that converts wall strength into freestanding balance.",
+      "prerequisites": [
+        "wall-shoulder-taps"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "hold_seconds": 5,
+        "sets": 5,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Wall shoulder taps",
+        "Pirouette bail practice",
+        "Fingertip pressure awareness drills"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "freestanding handstand kick up attempts balance practice",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "freestanding-handstand",
+      "name": "Freestanding Handstand",
+      "category": "balance",
+      "description": "A controlled freestanding handstand without wall support. The primary balance skill milestone; demands whole-body tension, fingertip pressure regulation, and shoulder endurance.",
+      "prerequisites": [
+        "kickup-attempts"
+      ],
+      "strength_prerequisites": [
+        "10 consecutive wall handstand shoulder taps each side"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "hold_seconds": 15,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Wall shoulder taps",
+        "Kick-up practice to wall",
+        "Freestanding kick-up attempts"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "freestanding handstand tutorial progression kick up balance control",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "tuck-front-lever",
+      "name": "Tuck Front Lever",
+      "category": "pulling",
+      "description": "Inverted hang from a bar with knees tucked to chest and back parallel to the ground. The first formal position in the front lever progression.",
+      "prerequisites": [
+        "scapular-pull",
+        "l-hang"
+      ],
+      "strength_prerequisites": [
+        "5 strict pull-ups"
+      ],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "hold_seconds": 10,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Tuck front lever pull-ups",
+        "Band-assisted tuck front lever",
+        "Inverted hang holds"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "tuck front lever tutorial progression bodyweight inverted",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "adv-tuck-front-lever",
+      "name": "Advanced Tuck Front Lever",
+      "category": "pulling",
+      "description": "Tuck front lever with the back flat (no rounded spine) and thighs parallel to floor \u2014 more demanding due to the longer lever arm and greater lat engagement required.",
+      "prerequisites": [
+        "tuck-front-lever"
+      ],
+      "strength_prerequisites": [
+        "8 strict pull-ups"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "hold_seconds": 10,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Tuck front lever rows",
+        "Advanced tuck front lever negatives",
+        "Archer pull-ups"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "advanced tuck front lever form tutorial flat back lat",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "one-leg-front-lever",
+      "name": "One-Leg Front Lever",
+      "category": "pulling",
+      "description": "Front lever with one leg fully extended and one leg tucked, reducing the lever arm relative to straddle. Bridges the gap between advanced tuck and straddle front lever.",
+      "prerequisites": [
+        "adv-tuck-front-lever"
+      ],
+      "strength_prerequisites": [
+        "8 strict pull-ups"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "hold_seconds": 10,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "One-leg front lever negatives",
+        "Advanced tuck front lever rows",
+        "Archer pull-ups"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "one leg front lever tutorial progression intermediate",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "straddle-front-lever",
+      "name": "Straddle Front Lever",
+      "category": "pulling",
+      "description": "Front lever with legs in a wide straddle to reduce the lever arm. Builds the straight-arm pulling strength needed for full front lever.",
+      "prerequisites": [
+        "one-leg-front-lever"
+      ],
+      "strength_prerequisites": [
+        "10 strict pull-ups"
+      ],
+      "progression_level": 4,
+      "unlock_criteria": {
+        "hold_seconds": 8,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Straddle front lever rows",
+        "Archer pull-ups",
+        "Advanced tuck front lever rows"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "straddle front lever tutorial straight arm pulling strength",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "front-lever",
+      "name": "Front Lever",
+      "category": "pulling",
+      "description": "Full front lever: body completely horizontal, legs together and straight, arms fully extended. One of the definitive pulling strength skills in calisthenics.",
+      "prerequisites": [
+        "straddle-front-lever"
+      ],
+      "strength_prerequisites": [
+        "12 strict pull-ups",
+        "5 chest-to-bar pull-ups"
+      ],
+      "progression_level": 5,
+      "unlock_criteria": {
+        "hold_seconds": 5,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Front lever rows",
+        "Straddle front lever rows",
+        "Front lever pull-ups"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "full front lever tutorial hold progression Steven Low",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "tuck-back-lever",
+      "name": "Tuck Back Lever",
+      "category": "pulling",
+      "description": "Hanging below a bar face down, knees tucked, body roughly parallel to the ground. Develops shoulder extension strength as the entry point for back lever.",
+      "prerequisites": [
+        "pike-skin-the-cat"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "hold_seconds": 10,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "German hang holds",
+        "Skin the cat",
+        "Band-assisted tuck back lever"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "tuck back lever tutorial beginner progression shoulder extension",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "adv-tuck-back-lever",
+      "name": "Advanced Tuck Back Lever",
+      "category": "pulling",
+      "description": "Tuck back lever with back flat and hips fully extended \u2014 the bridge between tuck and straddle back lever progressions.",
+      "prerequisites": [
+        "tuck-back-lever"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "hold_seconds": 10,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Tuck back lever negatives",
+        "German hang mobility",
+        "Slow skin the cat"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "advanced tuck back lever form tutorial flat back",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "straddle-back-lever",
+      "name": "Straddle Back Lever",
+      "category": "pulling",
+      "description": "Back lever with legs held in a wide straddle, reducing the lever arm. A demanding intermediate position between advanced tuck and full back lever.",
+      "prerequisites": [
+        "adv-tuck-back-lever"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "hold_seconds": 8,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Advanced tuck back lever holds",
+        "German hang pullout negatives",
+        "Shoulder extension mobility"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "straddle back lever tutorial progression intermediate",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "back-lever",
+      "name": "Back Lever",
+      "category": "pulling",
+      "description": "Full back lever: body completely horizontal, legs together and straight, arms extended downward. Requires exceptional shoulder extension flexibility and pulling strength.",
+      "prerequisites": [
+        "straddle-back-lever"
+      ],
+      "strength_prerequisites": [
+        "5 dips",
+        "pike skin the cat 3x5"
+      ],
+      "progression_level": 4,
+      "unlock_criteria": {
+        "hold_seconds": 5,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Back lever negatives from straddle",
+        "German hang pullout",
+        "Back lever tuck-to-straddle transitions"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "full back lever tutorial hold progression skin the cat",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "tuck-l-sit",
+      "name": "Tuck L-Sit",
+      "category": "pushing",
+      "description": "Support hold with both knees tucked to chest, feet off the ground. Builds hip flexor and tricep pushing strength as the entry to full L-sit.",
+      "prerequisites": [
+        "support-hold",
+        "hollow-body"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 1,
+      "unlock_criteria": {
+        "hold_seconds": 15,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Parallel bar tuck hold",
+        "Floor tuck L-sit on fists",
+        "Hanging knee raises"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "tuck L-sit tutorial beginner parallel bars floor",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "one-leg-l-sit",
+      "name": "One-Leg L-Sit",
+      "category": "pushing",
+      "description": "Support hold with one leg fully extended parallel to floor and one tucked. Bridges the compression demand gap between tuck and full L-sit.",
+      "prerequisites": [
+        "tuck-l-sit"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "hold_seconds": 10,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Alternating one-leg L-sit holds",
+        "Seated pike leg raises",
+        "Hip flexor stretches"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "one leg L-sit tutorial progression hip flexor compression",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "l-sit",
+      "name": "L-Sit",
+      "category": "pushing",
+      "description": "Full L-sit: both legs extended straight and parallel to the floor in a support position. Demonstrates significant hip flexor strength, compression capacity, and tricep endurance.",
+      "prerequisites": [
+        "one-leg-l-sit"
+      ],
+      "strength_prerequisites": [
+        "30s tuck L-sit on parallettes or floor"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "hold_seconds": 10,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Parallel bar L-sit holds",
+        "L-sit to tuck transitions",
+        "Hanging leg raises for compression"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "L-sit full tutorial hold parallettes floor bars progression",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "chest-to-bar-pull-up",
+      "name": "Chest-to-Bar Pull-Up",
+      "category": "pulling",
+      "description": "Pull-up pulled high enough that the chest contacts the bar. Builds the elevated pulling position and explosive pulling strength needed for muscle-up transition.",
+      "prerequisites": [
+        "scapular-pull",
+        "arch-hang"
+      ],
+      "strength_prerequisites": [
+        "8 strict pull-ups"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "High pull-ups with pause at top",
+        "Band-assisted C2B pull-ups",
+        "Explosive pull-ups from dead hang"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "chest to bar pull up tutorial technique height",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "muscle-up-negative",
+      "name": "Muscle-Up Negative",
+      "category": "pulling",
+      "description": "Slowly lowering from the top dip position down through the transition and into a dead hang. Builds muscle-up-specific pulling and transition strength via eccentric loading.",
+      "prerequisites": [
+        "chest-to-bar-pull-up",
+        "support-hold"
+      ],
+      "strength_prerequisites": [
+        "10 strict pull-ups",
+        "5 dips"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "reps": 3,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "False grip dead hangs",
+        "Ring transition drills",
+        "Slow muscle-up negative 4-count"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "muscle up negative tutorial transition eccentric false grip",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "muscle-up",
+      "name": "Muscle-Up",
+      "category": "pulling",
+      "description": "Full bar or ring muscle-up: pulling from a dead hang, transitioning over the bar/rings, and pressing to full lockout. Combines explosive pulling strength with a technically demanding transition.",
+      "prerequisites": [
+        "muscle-up-negative",
+        "chest-to-bar-pull-up"
+      ],
+      "strength_prerequisites": [
+        "12 strict pull-ups",
+        "10 dips"
+      ],
+      "progression_level": 4,
+      "unlock_criteria": {
+        "reps": 3,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Chest-to-bar pull-ups",
+        "Explosive pull-ups",
+        "Ring transition drills"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "muscle up tutorial bar rings strict technique progression",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "tuck-flag",
+      "name": "Tuck Human Flag",
+      "category": "pulling",
+      "description": "Holding a vertical pole with both arms and suspending the body horizontally with knees tucked. Develops the lateral pushing and pulling force required for human flag.",
+      "prerequisites": [
+        "support-hold",
+        "hollow-body"
+      ],
+      "strength_prerequisites": [
+        "10 push-ups",
+        "5 pull-ups"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "hold_seconds": 5,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Tuck flag holds",
+        "Side plank progressions",
+        "Lateral pull-down drills on pole"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B",
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "tuck human flag tutorial beginner pole vertical",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "straddle-flag",
+      "name": "Straddle Human Flag",
+      "category": "pulling",
+      "description": "Human flag with legs in a wide straddle, reducing the lever arm. A demanding intermediate position before full human flag.",
+      "prerequisites": [
+        "tuck-flag"
+      ],
+      "strength_prerequisites": [
+        "15 push-ups",
+        "8 pull-ups"
+      ],
+      "progression_level": 4,
+      "unlock_criteria": {
+        "hold_seconds": 5,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Tuck to straddle flag transitions",
+        "Lateral push-pull negatives",
+        "Windshield wiper hangs"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B",
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "straddle human flag tutorial progression intermediate",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "human-flag",
+      "name": "Human Flag",
+      "category": "pulling",
+      "description": "Full human flag: body held completely horizontal from a vertical pole, arms extended, legs together. One of the most visually striking and physically demanding calisthenics skills.",
+      "prerequisites": [
+        "straddle-flag"
+      ],
+      "strength_prerequisites": [
+        "20 push-ups",
+        "12 pull-ups"
+      ],
+      "progression_level": 5,
+      "unlock_criteria": {
+        "hold_seconds": 3,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Straddle flag holds",
+        "Tuck flag negatives",
+        "Lateral force training with bands on pole"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B",
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "human flag full tutorial hold progression vertical pole",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "tuck-planche",
+      "name": "Tuck Planche",
+      "category": "pushing",
+      "description": "Both feet off the ground in a tuck position with arms locked straight and hips at shoulder height. The first true straight-arm planche position.",
+      "prerequisites": [
+        "planche-lean",
+        "tuck-l-sit"
+      ],
+      "strength_prerequisites": [
+        "20 push-ups"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "hold_seconds": 10,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Planche lean max holds",
+        "Pseudo planche push-ups",
+        "Frog stand / crow pose holds"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "tuck planche tutorial straight arm hold progression",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "adv-tuck-planche",
+      "name": "Advanced Tuck Planche",
+      "category": "pushing",
+      "description": "Tuck planche with back flat (no rounded spine) and hips fully extended at shoulder height. Increases the lever demand on the shoulder girdle significantly.",
+      "prerequisites": [
+        "tuck-planche"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "hold_seconds": 10,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Advanced tuck planche push-ups",
+        "Tuck-to-adv tuck transitions",
+        "Planche lean variations"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "advanced tuck planche tutorial flat back hold straight arm",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "straddle-planche",
+      "name": "Straddle Planche",
+      "category": "pushing",
+      "description": "Full planche with legs held wide in a straddle, body horizontal, arms locked straight. A major milestone requiring exceptional straight-arm pushing strength.",
+      "prerequisites": [
+        "adv-tuck-planche"
+      ],
+      "strength_prerequisites": [
+        "30 push-ups",
+        "10 pseudo planche push-ups"
+      ],
+      "progression_level": 4,
+      "unlock_criteria": {
+        "hold_seconds": 5,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Advanced tuck to straddle transitions",
+        "Straddle planche push-ups",
+        "Ring advanced tuck planche"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "straddle planche tutorial progression straight arm intermediate",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "planche",
+      "name": "Planche",
+      "category": "pushing",
+      "description": "Full planche: body held completely horizontal with legs together and arms straight, supported only by hands. An elite-level straight-arm pushing skill.",
+      "prerequisites": [
+        "straddle-planche"
+      ],
+      "strength_prerequisites": [
+        "5s straddle planche hold",
+        "5 straddle planche push-ups"
+      ],
+      "progression_level": 5,
+      "unlock_criteria": {
+        "hold_seconds": 3,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Straddle planche holds",
+        "Planche push-ups",
+        "Ring straddle planche holds"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "full planche tutorial hold progression straight arm elite",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "wall-headstand-push-up",
+      "name": "Wall Headstand Push-Up",
+      "category": "pushing",
+      "description": "Push-up from a headstand position against a wall. Builds overhead pressing strength specific to HSPU without yet demanding full handstand balance.",
+      "prerequisites": [
+        "wall-handstand"
+      ],
+      "strength_prerequisites": [
+        "10 pike push-ups"
+      ],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Pike push-ups",
+        "Elevated pike push-ups",
+        "Wall headstand hold"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "wall headstand push up tutorial pike HSPU progression",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "wall-handstand-push-up",
+      "name": "Wall Handstand Push-Up",
+      "category": "pushing",
+      "description": "Full handstand push-up performed with heels against a wall. Develops the overhead vertical pressing strength and range of motion needed for freestanding HSPU.",
+      "prerequisites": [
+        "wall-headstand-push-up",
+        "wall-handstand"
+      ],
+      "strength_prerequisites": [
+        "5 wall headstand push-ups"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Wall HSPU negatives",
+        "Wall headstand push-ups",
+        "Pike push-ups with elevated feet"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "wall handstand push up tutorial form range of motion HSPU",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "freestanding-hspu",
+      "name": "Freestanding Handstand Push-Up",
+      "category": "pushing",
+      "description": "Handstand push-up performed freestanding without wall support. Requires both the pressing strength of a HSPU and full freestanding balance \u2014 an advanced convergence of skills.",
+      "prerequisites": [
+        "wall-handstand-push-up",
+        "freestanding-handstand"
+      ],
+      "strength_prerequisites": [
+        "8 wall handstand push-ups"
+      ],
+      "progression_level": 4,
+      "unlock_criteria": {
+        "reps": 3,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Wall HSPU sets",
+        "Freestanding handstand holds",
+        "Spotted freestanding HSPU negatives"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "freestanding handstand push up tutorial advanced balance strength",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "cossack-squat",
+      "name": "Cossack Squat",
+      "category": "mobility",
+      "description": "Deep lateral squat with one leg extended to the side while the other is fully loaded. Builds hip mobility, adductor flexibility, and lateral balance needed for pistol squat.",
+      "prerequisites": [],
+      "strength_prerequisites": [],
+      "progression_level": 1,
+      "unlock_criteria": {
+        "reps": 10,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Lateral lunge with 3s hold",
+        "Deep cossack hold",
+        "Adductor stretches"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "cossack squat tutorial hip mobility lateral squat flexibility",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "assisted-pistol-squat",
+      "name": "Assisted Pistol Squat",
+      "category": "mobility",
+      "description": "Single-leg squat to full depth with band, TRX, or pole for balance assistance. Builds single-leg strength and ankle dorsiflexion range without yet demanding full balance.",
+      "prerequisites": [
+        "cossack-squat"
+      ],
+      "strength_prerequisites": [
+        "5 bodyweight squats to parallel"
+      ],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Assisted pistol squat with resistance band",
+        "Single-leg box squat to low box",
+        "Ankle mobility dorsiflexion drills"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "assisted pistol squat tutorial band TRX single leg depth",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "pistol-squat",
+      "name": "Pistol Squat",
+      "category": "mobility",
+      "description": "Full unassisted single-leg squat to the floor and back up with the free leg held extended forward. A complete test of single-leg strength, mobility, and balance.",
+      "prerequisites": [
+        "assisted-pistol-squat"
+      ],
+      "strength_prerequisites": [
+        "8 assisted pistol squats each side"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Assisted pistol squats",
+        "Cossack squats",
+        "Single-leg box squat to low box"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "pistol squat tutorial full form unassisted progression",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "tuck-dragon-flag-negative",
+      "name": "Tuck Dragon Flag Negative",
+      "category": "pushing",
+      "description": "Lowering from an inverted tuck position down toward horizontal while maintaining full-body tension. Eccentric-first entry to the dragon flag series \u2014 safest for connective tissue.",
+      "prerequisites": [
+        "hollow-body"
+      ],
+      "strength_prerequisites": [
+        "10 hanging knee raises"
+      ],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Hollow body holds",
+        "Lying leg raises",
+        "Slow tuck reverse crunch"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "after_strength"
+      },
+      "video_reference": "tuck dragon flag negative tutorial eccentric beginner",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "adv-tuck-dragon-flag",
+      "name": "Advanced Tuck Dragon Flag",
+      "category": "pushing",
+      "description": "Dragon flag held with back flat and hips extended in an advanced tuck. The intermediate step between tuck negative and straddle/full dragon flag.",
+      "prerequisites": [
+        "tuck-dragon-flag-negative"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Tuck dragon flag negatives",
+        "L-hang holds",
+        "Advanced hollow body holds"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "after_strength"
+      },
+      "video_reference": "advanced tuck dragon flag tutorial flat back progression",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "dragon-flag",
+      "name": "Dragon Flag",
+      "category": "pushing",
+      "description": "Full dragon flag: body held rigid in a straight line from shoulders to feet, lowered and raised from a bench. An elite anterior chain exercise requiring full-body tension and lat control.",
+      "prerequisites": [
+        "adv-tuck-dragon-flag"
+      ],
+      "strength_prerequisites": [
+        "10 hanging leg raises"
+      ],
+      "progression_level": 4,
+      "unlock_criteria": {
+        "reps": 3,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Advanced tuck dragon flag negatives",
+        "Straddle dragon flag",
+        "Straight leg lowering from bar"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "after_strength"
+      },
+      "video_reference": "dragon flag full tutorial bench straight body tension",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "nordic-curl-negative",
+      "name": "Nordic Curl Negative",
+      "category": "mobility",
+      "description": "Kneeling with feet anchored, slowly lowering the body forward under control. The safe eccentric-first entry to Nordic curl; prevents injury while building hamstring strength rapidly.",
+      "prerequisites": [],
+      "strength_prerequisites": [],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 3,
+        "consecutive_sessions": 2
+      },
+      "skill_specific_accessories": [
+        "Hamstring slide on smooth floor",
+        "Band-assisted Nordic negative",
+        "Romanian deadlift"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "C"
+        ],
+        "order": "after_strength"
+      },
+      "video_reference": "nordic curl negative tutorial hamstring eccentric strength",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
+      "id": "nordic-curl",
+      "name": "Nordic Curl",
+      "category": "mobility",
+      "description": "Full Nordic curl: lowering and raising the body from a kneeling position with feet anchored using only hamstring strength. Produces the greatest eccentric hamstring stimulus of any exercise.",
+      "prerequisites": [
+        "nordic-curl-negative"
+      ],
+      "strength_prerequisites": [
+        "5 controlled nordic curl negatives"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "reps": 3,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Nordic curl negatives",
+        "Band-assisted full Nordic curls",
+        "Hamstring slides"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "C"
+        ],
+        "order": "after_strength"
+      },
+      "video_reference": "nordic curl full tutorial hamstring GHR strength",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    }
+  ]
+}
