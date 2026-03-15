@@ -77,7 +77,7 @@ export function useSessionWizard(profile: AthleteProfile) {
 
   const [state, setState] = useState<WizardState>({
     step: 'readiness',
-    sleepScore: 7,
+    sleepScore: 75,
     stressScore: 5,
     timeTier: profile.defaultTimeTier,
     template: null,
@@ -346,7 +346,7 @@ export function useSessionWizard(profile: AthleteProfile) {
     sessionId.current = uuid()
     setState({
       step: 'readiness',
-      sleepScore: 7,
+      sleepScore: 75,
       stressScore: 5,
       timeTier: profile.defaultTimeTier,
       template: null,

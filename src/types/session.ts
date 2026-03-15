@@ -80,7 +80,7 @@ export interface Session {
   weekInBlock: number
   phase: 'accumulation' | 'deload' | 'intensification' | 'realization'
   readiness: ReadinessState
-  sleepScore: number                  // 1–10
+  sleepScore: number                  // 0–100 (Apple Watch sleep score)
   stressScore: number                 // 1–10
   timeTier: TimeTier
   durationActualMinutes?: number

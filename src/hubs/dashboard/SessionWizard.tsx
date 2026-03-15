@@ -123,7 +123,7 @@ interface ReadinessStepProps {
 }
 
 const ReadinessStep: React.FC<ReadinessStepProps> = ({ onConfirm }) => {
-  const [sleep, setSleep] = useState(7)
+  const [sleep, setSleep] = useState(75)
   const [stress, setStress] = useState(5)
   const readiness = computeReadiness({ sleepScore: sleep, stressScore: stress })
 
@@ -138,12 +138,13 @@ const ReadinessStep: React.FC<ReadinessStepProps> = ({ onConfirm }) => {
 
       <div className="space-y-5 bg-bg-2 border border-line rounded p-4">
         <ScoreSlider
-          label="Sleep quality"
+          label="Sleep score"
           value={sleep}
-          min={1} max={10}
+          min={0} max={100}
           onChange={setSleep}
-          goodAt={7}
-          dangerBelow={6}
+          goodAt={70}
+          dangerBelow={60}
+          unit="%"
         />
         <ScoreSlider
           label="Stress level"
@@ -783,11 +784,11 @@ const DoneToggle: React.FC<{ done: boolean; onToggle: (v: boolean) => void; labe
 
 interface ScoreSliderProps {
   label: string; value: number; min: number; max: number; onChange: (v: number) => void
-  goodAt?: number; goodBelow?: boolean; dangerAt?: number; dangerBelow?: number
+  goodAt?: number; goodBelow?: boolean; dangerAt?: number; dangerBelow?: number; unit?: string
 }
 
 const ScoreSlider: React.FC<ScoreSliderProps> = ({
-  label, value, min, max, onChange, goodAt, goodBelow = false, dangerAt, dangerBelow,
+  label, value, min, max, onChange, goodAt, goodBelow = false, dangerAt, dangerBelow, unit,
 }) => {
   const isGood = goodAt !== undefined && (goodBelow ? value <= goodAt : value >= goodAt)
   const isDanger =
@@ -799,7 +800,7 @@ const ScoreSlider: React.FC<ScoreSliderProps> = ({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <span className="font-mono uppercase tracking-widest text-mono-xs text-text-3">{label}</span>
-        <span className={`font-heading text-display-sm leading-none ${color}`}>{value}</span>
+        <span className={`font-heading text-display-sm leading-none ${color}`}>{value}{unit ?? ''}</span>
       </div>
       <input
         type="range" min={min} max={max} value={value}
@@ -807,8 +808,8 @@ const ScoreSlider: React.FC<ScoreSliderProps> = ({
         className="w-full cursor-pointer"
       />
       <div className="flex justify-between">
-        <span className="font-mono text-mono-xs text-text-3">{min}</span>
-        <span className="font-mono text-mono-xs text-text-3">{max}</span>
+        <span className="font-mono text-mono-xs text-text-3">{min}{unit ?? ''}</span>
+        <span className="font-mono text-mono-xs text-text-3">{max}{unit ?? ''}</span>
       </div>
     </div>
   )

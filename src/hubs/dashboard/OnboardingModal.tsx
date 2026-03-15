@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import type { AthleteProfile } from '../../types/athlete'
 import { DEFAULT_ATHLETE } from '../../types/athlete'
 import { Button } from '../../components/Button'
-import { Tag } from '../../components/Tag'
-
 interface Props {
   onComplete: (profile: AthleteProfile) => void
 }

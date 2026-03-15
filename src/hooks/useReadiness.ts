@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import type { ReadinessLight } from '../types/athlete'
 import { computeReadiness } from '../types/athlete'
 
-export function useReadiness(initialSleep = 7, initialStress = 5) {
+export function useReadiness(initialSleep = 75, initialStress = 5) {
   const [sleepScore, setSleepScore] = useState(initialSleep)
   const [stressScore, setStressScore] = useState(initialStress)
 

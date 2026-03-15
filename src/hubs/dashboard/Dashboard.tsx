@@ -123,7 +123,7 @@ export const Dashboard: React.FC = () => {
         <ReadinessLight readiness={readiness} />
         {showReadinessEdit && (
           <div className="mt-3 bg-bg-3 rounded border border-line p-3 space-y-4 animate-fade-up">
-            <SliderRow label="Sleep" value={sleepScore} onChange={setSleepScore} min={1} max={10} accentAt={7} dangerBelow={6} />
+            <SliderRow label="Sleep" value={sleepScore} onChange={setSleepScore} min={0} max={100} accentAt={70} dangerBelow={60} />
             <SliderRow label="Stress" value={stressScore} onChange={setStressScore} min={1} max={10} dangerAt={8} />
           </div>
         )}

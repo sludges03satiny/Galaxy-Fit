@@ -6,7 +6,7 @@ import type { ActiveSkillSelection } from './skill'
 // ─── Readiness Light ──────────────────────────────────────────────────────────
 
 export interface ReadinessInputs {
-  sleepScore: number    // 1–10
+  sleepScore: number    // 0–100 (Apple Watch sleep score as percentage)
   stressScore: number   // 1–10
 }
 
@@ -19,10 +19,10 @@ export interface ReadinessLight {
 }
 
 /**
- * Readiness light logic (from context doc — the CORRECT version):
- *   Green:  sleep ≥ 7 AND stress ≤ 5
- *   Yellow: sleep 6–7 OR stress 6–7 (but not both bad)
- *   Red:    sleep < 6 OR stress ≥ 8 (either condition alone triggers red)
+ * Readiness light logic (from context doc — the CORRECT version, sleep on 0–100 scale):
+ *   Green:  sleep ≥ 70 AND stress ≤ 5
+ *   Yellow: sleep 60–69 OR stress 6–7 (but not both bad)
+ *   Red:    sleep < 60 OR stress ≥ 8 (either condition alone triggers red)
  */
 export function computeReadiness(inputs: ReadinessInputs): ReadinessLight {
   const { sleepScore, stressScore } = inputs
@@ -31,11 +31,11 @@ export function computeReadiness(inputs: ReadinessInputs): ReadinessLight {
   let label: string
   let description: string
 
-  if (sleepScore < 6 || stressScore >= 8) {
+  if (sleepScore < 60 || stressScore >= 8) {
     state = 'red'
     label = 'RECOVERY MODE'
     description = 'Skill + 1 main lift only. No conditioning today.'
-  } else if (sleepScore >= 7 && stressScore <= 5) {
+  } else if (sleepScore >= 70 && stressScore <= 5) {
     state = 'green'
     label = 'OPTIMAL'
     description = 'Train as programmed. Optional top set available.'
