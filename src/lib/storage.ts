@@ -126,6 +126,8 @@ export function saveBenchmark(result: BenchmarkResult): void {
     benchmarks.push(result)
   }
   write(KEYS.BENCHMARKS, benchmarks)
+  // Dispatch event so other components can react to benchmark updates
+  window.dispatchEvent(new Event('galaxyfit:benchmark-saved'))
 }
 
 export function getBenchmarks(): BenchmarkResult[] {
@@ -136,6 +138,11 @@ export function getLatestBenchmark(): BenchmarkResult | null {
   const benchmarks = getBenchmarks()
   if (benchmarks.length === 0) return null
   return benchmarks.sort((a, b) => b.date.localeCompare(a.date))[0]
+}
+
+export function deleteBenchmark(id: string): void {
+  const benchmarks = getBenchmarks().filter(b => b.id !== id)
+  write(KEYS.BENCHMARKS, benchmarks)
 }
 
 // ─── Activities (Z Days) ──────────────────────────────────────────────────────

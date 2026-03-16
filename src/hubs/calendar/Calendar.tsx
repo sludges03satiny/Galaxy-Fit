@@ -80,11 +80,6 @@ interface Point { x: number; y: number; label: string; value: number; date: stri
 
 interface TooltipState { x: number; y: number; label: string; value: string; date: string }
 
-function buildPolyline(points: Point[], svgW: number, svgH: number, padX: number, padY: number): string {
-  if (points.length === 0) return ''
-  return points.map(p => `${p.x},${p.y}`).join(' ')
-}
-
 interface SVGLineChartProps {
   series: { id: string; label: string; color: string; points: Point[] }[]
   svgH?: number
@@ -463,12 +458,13 @@ interface BenchmarkResult {
 
 // Minimal hook stub — will gracefully degrade if not present
 function useBenchmarks(): { benchmarks: BenchmarkResult[] } {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const mod = require('../../hooks/useBenchmarks')
-    if (typeof mod.useBenchmarks === 'function') return mod.useBenchmarks()
-  } catch (_) {}
-  return { benchmarks: [] }
+  const [benchmarks] = React.useState<BenchmarkResult[]>(() => {
+    try {
+      const raw = localStorage.getItem('gf_benchmarks')
+      return raw ? JSON.parse(raw) : []
+    } catch { return [] }
+  })
+  return { benchmarks }
 }
 
 const GraphPanel: React.FC<{ sessions: Session[] }> = ({ sessions }) => {
