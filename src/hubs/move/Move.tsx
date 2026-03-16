@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { getActivities, saveActivity } from '../../lib/storage'
 import { categorizeActivity, INTERVAL_LIBRARY } from '../../types/activity'
 import type { ZActivity, ActivityType } from '../../types/activity'

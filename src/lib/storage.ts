@@ -91,7 +91,7 @@ export function getSkillProgress(): SkillProgress {
   return read<SkillProgress>(KEYS.SKILL_PROGRESS, DEFAULT_SKILL_PROGRESS)
 }
 
-export function updateSkillNodeStatus(nodeId: string, update: Partial<SkillProgress>): void {
+export function updateSkillNodeStatus(update: Partial<SkillProgress>): void {
   const current = getSkillProgress()
   const merged: SkillProgress = {
     nodeStatuses: { ...current.nodeStatuses, ...(update.nodeStatuses ?? {}) },

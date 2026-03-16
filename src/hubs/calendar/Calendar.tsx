@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useMemo } from 'react'
+import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react'
 import { useSessions } from '../../hooks/useSessions'
 import type { Session, LiftLogEntry, SkillLogEntry } from '../../types/session'
 
@@ -53,7 +53,6 @@ function epley(weight: number, reps: number): number {
 // ─── Date helpers ─────────────────────────────────────────────────────────────
 
 function pad(n: number) { return String(n).padStart(2, '0') }
-function toISO(y: number, m: number, d: number) { return `${y}-${pad(m+1)}-${pad(d)}` }
 
 function subtractMonths(date: Date, months: number): Date {
   const d = new Date(date)
@@ -93,16 +92,24 @@ const SVGLineChart: React.FC<SVGLineChartProps> = ({
   series, svgH = 180, padX = 40, padY = 20, yUnit = '', formatY = (v) => String(Math.round(v))
 }) => {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null)
-  const svgRef = useRef<SVGSVGElement>(null)
+  const svgRef = useRef<SVGSVGElement | null>(null)
+  const resizeObserverRef = useRef<ResizeObserver | null>(null)
   const [svgW, setSvgW] = useState(600)
 
   const measuredRef = useCallback((el: SVGSVGElement | null) => {
+    resizeObserverRef.current?.disconnect()
+    resizeObserverRef.current = null
     if (!el) return
     const obs = new ResizeObserver(entries => {
       setSvgW(entries[0].contentRect.width || 600)
     })
     obs.observe(el)
-    ;(el as any).__obs = obs
+    resizeObserverRef.current = obs
+  }, [])
+
+  useEffect(() => () => {
+    resizeObserverRef.current?.disconnect()
+    resizeObserverRef.current = null
   }, [])
 
   const allPoints = series.flatMap(s => s.points)
@@ -141,7 +148,7 @@ const SVGLineChart: React.FC<SVGLineChartProps> = ({
   return (
     <div style={{ position: 'relative' }}>
       <svg
-        ref={(el) => { (svgRef as any).current = el; measuredRef(el) }}
+        ref={(el) => { svgRef.current = el; measuredRef(el) }}
         width="100%"
         height={svgH}
         style={{ display: 'block', overflow: 'visible' }}
@@ -206,7 +213,7 @@ const SVGLineChart: React.FC<SVGLineChartProps> = ({
               stroke={ACCENT.bg2}
               strokeWidth={1.5}
               style={{ cursor: 'pointer' }}
-              onMouseEnter={(e) => {
+              onMouseEnter={() => {
                 setTooltip({
                   x: p.sx,
                   y: p.sy,
@@ -337,6 +344,9 @@ const SVGBarChart: React.FC<{ bars: BarDatum[]; svgH?: number }> = ({ bars, svgH
 const SessionDetailCard: React.FC<{ session: Session; onClose: () => void }> = ({ session, onClose }) => {
   const dayColor = DAY_COLOR[session.dayType] ?? '#9e9b8e'
 
+  type TopSet = { name: string; weight: number; reps: number; e1rm: number }
+  type BestSkill = { nodeId: string; value: string; type: 'hold' | 'reps' }
+
   // Top set per lift
   const topSets = session.liftEntries.map((l: LiftLogEntry) => {
     const completedSets = l.sets.filter(s => s.completed === true)
@@ -344,7 +354,7 @@ const SessionDetailCard: React.FC<{ session: Session; onClose: () => void }> = (
     if (setsToUse.length === 0) return null
     const best = setsToUse.reduce((a, b) => epley(a.weight_kg, a.reps) >= epley(b.weight_kg, b.reps) ? a : b)
     return { name: l.liftName, weight: best.weight_kg, reps: best.reps, e1rm: epley(best.weight_kg, best.reps) }
-  }).filter(Boolean)
+  }).filter((v): v is TopSet => v !== null)
 
   // Best hold/rep per skill
   const bestSkills = session.skillEntries.map((sl: SkillLogEntry) => {
@@ -360,7 +370,7 @@ const SessionDetailCard: React.FC<{ session: Session; onClose: () => void }> = (
       return { nodeId: sl.nodeId, value: `${best} reps`, type: 'reps' }
     }
     return null
-  }).filter(Boolean)
+  }).filter((v): v is BestSkill => v !== null)
 
   return (
     <div style={{ background: ACCENT.bg2, border: `1px solid ${ACCENT.line}`, borderRadius: 6, overflow: 'hidden' }}>
@@ -407,9 +417,9 @@ const SessionDetailCard: React.FC<{ session: Session; onClose: () => void }> = (
         {/* Lifts */}
         {topSets.length > 0 && (
           <div>
-            <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 9, color: ACCENT.text3, letterSpacing: 2, marginBottom: 6, textTransform: 'uppercase' }}>Lifts</div>
+              <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 9, color: ACCENT.text3, letterSpacing: 2, marginBottom: 6, textTransform: 'uppercase' }}>Lifts</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              {topSets.map((t: any, i: number) => (
+              {topSets.map((t, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 13, color: '#d4d4c8', flex: 1 }}>{t.name}</span>
                   <span style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: '#d4d4c8' }}>{t.weight}kg × {t.reps}</span>
@@ -425,7 +435,7 @@ const SessionDetailCard: React.FC<{ session: Session; onClose: () => void }> = (
           <div>
             <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 9, color: ACCENT.text3, letterSpacing: 2, marginBottom: 6, textTransform: 'uppercase' }}>Skills</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {bestSkills.map((s: any, i: number) => (
+              {bestSkills.map((s, i) => (
                 <span key={i} style={{
                   background: '#1a1a14', border: `1px solid ${ACCENT.line}`,
                   borderRadius: 3, padding: '3px 8px',
@@ -467,6 +477,9 @@ function useBenchmarks(): { benchmarks: BenchmarkResult[] } {
   return { benchmarks }
 }
 
+const LIFT_COLORS = ['#c8f050','#50c8f0','#f0c828','#f05050','#c850f0','#50f0c8'] as const
+const SKILL_COLORS = ['#f0c828','#c8f050','#50c8f0','#f05050','#c850f0'] as const
+
 const GraphPanel: React.FC<{ sessions: Session[] }> = ({ sessions }) => {
   const [activeTab, setActiveTab] = useState<GraphTab>('STRENGTH')
   const [zoom, setZoom] = useState<ZoomWindow>('3M')
@@ -505,8 +518,6 @@ const GraphPanel: React.FC<{ sessions: Session[] }> = ({ sessions }) => {
     }
   }
 
-  const LIFT_COLORS = ['#c8f050','#50c8f0','#f0c828','#f05050','#c850f0','#50f0c8']
-
   const strengthSeries = useMemo(() => allLifts
     .filter(l => visibleLifts.has(l.id))
     .map((l, idx) => {
@@ -542,8 +553,6 @@ const GraphPanel: React.FC<{ sessions: Session[] }> = ({ sessions }) => {
       setVisibleSkills(new Set(allSkills.slice(0, 3).map(s => s.id)))
     }
   }
-
-  const SKILL_COLORS = ['#f0c828','#c8f050','#50c8f0','#f05050','#c850f0']
 
   const skillSeries = useMemo(() => allSkills
     .filter(s => visibleSkills.has(s.id))

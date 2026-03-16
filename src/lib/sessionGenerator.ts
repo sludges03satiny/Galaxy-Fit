@@ -2,14 +2,13 @@
 // Generates session templates from athlete state + skill tree selections.
 // Implements logic-spec.md §5 and context doc session tier rules.
 
-import type { DayType, ReadinessState, TimeTier, SessionTemplate, PlannedSkillBlock, PlannedLiftBlock, PlannedAccessoryBlock, PlannedConditioningBlock, PlannedCoreBlock, WarmUpExercise } from '../types/session'
-import type { SkillNode } from '../types/skill'
-import type { ActiveSkillSelection } from '../types/skill'
+import type { ReadinessState, TimeTier, SessionTemplate, PlannedSkillBlock, PlannedLiftBlock, PlannedAccessoryBlock, PlannedConditioningBlock, PlannedCoreBlock, WarmUpExercise } from '../types/session'
+import type { DayType, SkillNode, ActiveSkillSelection } from '../types/skill'
 import type { BlockPhase } from '../types/athlete'
 
 // ─── Warm-Up Blocks (from context doc) ───────────────────────────────────────
 
-const WARMUPS: Record<'A' | 'B' | 'C', WarmUpExercise[]> = {
+const WARMUPS: Record<Exclude<DayType, 'Z'>, WarmUpExercise[]> = {
   A: [
     { name: 'Hip Circles', duration: '30s each direction' },
     { name: 'Leg Swings (front/back)', reps: 15 },

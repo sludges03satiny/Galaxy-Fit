@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react'
 import { useSkillTree } from '../../hooks/useSkillTree'
 import { useAthleteProfile } from '../../hooks/useAthleteProfile'
-import type { SkillNode, NodeStatus, SkillTree as SkillTreeType } from '../../types/skill'
+import type { SkillNode, NodeStatus, SkillTree as SkillTreeType, ActiveSkillSelection } from '../../types/skill'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -121,7 +121,7 @@ export const SkillTree: React.FC = () => {
   const [dismissedStalls, setDismissedStalls] = useState<Set<string>>(new Set())
   const [filter, setFilter]     = useState<'all' | 'active' | 'unlocked' | 'locked'>('all')
 
-  const activeSkills = (profile as any).activeSkills ?? {}
+  const activeSkills = profile.activeSkills ?? {}
 
   const visibleStalls = stalledNodes.filter(n => !dismissedStalls.has(n.id))
 
@@ -177,7 +177,7 @@ export const SkillTree: React.FC = () => {
         </div>
 
         {/* Active skill summary */}
-        <ActiveSkillSummary activeSkills={activeSkills} nodes={nodes} getStatus={getStatus} />
+        <ActiveSkillSummary activeSkills={activeSkills} nodes={nodes} />
       </div>
 
       {/* ── Stall warnings ── */}
@@ -213,7 +213,6 @@ export const SkillTree: React.FC = () => {
         <ConstellationGraph
           nodes={nodes}
           getStatus={getStatus}
-          getSessionCount={getSessionCount}
           activeSkills={activeSkills}
           selected={selected}
           onSelect={setSelected}
@@ -262,10 +261,9 @@ export const SkillTree: React.FC = () => {
 // ─── Active Skill Summary ─────────────────────────────────────────────────────
 
 const ActiveSkillSummary: React.FC<{
-  activeSkills: Record<string, string>
+  activeSkills: ActiveSkillSelection
   nodes: SkillNode[]
-  getStatus: (id: string) => NodeStatus
-}> = ({ activeSkills, nodes, getStatus }) => {
+}> = ({ activeSkills, nodes }) => {
   const entries = TREE_ORDER.map(tree => {
     const nodeId = activeSkills[tree]
     const node   = nodeId ? nodes.find(n => n.id === nodeId) : null
@@ -300,11 +298,10 @@ const ActiveSkillSummary: React.FC<{
 const ConstellationGraph: React.FC<{
   nodes: SkillNode[]
   getStatus: (id: string) => NodeStatus
-  getSessionCount: (id: string) => number
-  activeSkills: Record<string, string>
+  activeSkills: ActiveSkillSelection
   selected: SkillNode | null
   onSelect: (n: SkillNode) => void
-}> = ({ nodes, getStatus, getSessionCount, activeSkills, selected, onSelect }) => {
+}> = ({ nodes, getStatus, activeSkills, selected, onSelect }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const svgRef       = useRef<SVGSVGElement>(null)
 
@@ -314,7 +311,7 @@ const ConstellationGraph: React.FC<{
   const dragStart  = useRef({ x: 0, y: 0, tx: 0, ty: 0 })
   const lastPinchDist = useRef<number | null>(null)
 
-  const { layouts, width, height } = useMemo(() => buildLayout(nodes), [nodes])
+  const { layouts, width } = useMemo(() => buildLayout(nodes), [nodes])
   const layoutMap = useMemo(() => {
     const m = new Map<string, NodeLayout>()
     layouts.forEach(l => m.set(l.node.id, l))
@@ -428,7 +425,7 @@ const ConstellationGraph: React.FC<{
           width,
         }}
       >
-        {TREE_ORDER.map((tree, i) => {
+        {TREE_ORDER.map((tree) => {
           const col = layouts.filter(l => l.tree === tree)
           if (col.length === 0) return null
           const cx = col[0].x
@@ -490,11 +487,10 @@ const ConstellationGraph: React.FC<{
           ))}
 
           {/* Nodes */}
-          {layouts.map(({ node, x, y, tree }) => {
+          {layouts.map(({ node, x, y }) => {
             const status     = getStatus(node.id)
             const isSelected = selected?.id === node.id
             const isActive   = Object.values(activeSkills).includes(node.id)
-            const treeColor  = TREE_COLORS[tree]
 
             return (
               <g
@@ -608,7 +604,7 @@ const ListView: React.FC<{
   nodes: SkillNode[]
   getStatus: (id: string) => NodeStatus
   getSessionCount: (id: string) => number
-  activeSkills: Record<string, string>
+  activeSkills: ActiveSkillSelection
   selected: SkillNode | null
   onSelect: (n: SkillNode) => void
   filter: 'all' | 'active' | 'unlocked' | 'locked'
@@ -742,7 +738,7 @@ const NodeDetailSheet: React.FC<{
   sessionCount: number
   nodes: SkillNode[]
   getStatus: (id: string) => NodeStatus
-  activeSkills: Record<string, string>
+  activeSkills: ActiveSkillSelection
   isStalled: boolean
   onSetActive: (node: SkillNode) => void
   onClose: () => void

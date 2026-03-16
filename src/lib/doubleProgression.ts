@@ -42,7 +42,6 @@ function getIncrement(liftId: string): number {
 // ─── Core logic ───────────────────────────────────────────────────────────────
 
 export function evaluateProgression(
-  liftId: string,
   lastEntry: LiftLogEntry,
   repRange: [number, number],
   targetSets: number
@@ -117,7 +116,7 @@ export function getLiftSuggestion(
 
   const lastEntry = allEntries[0]
   const lastWeight = lastEntry.sets[0]?.weight_kg ?? startingWeight_kg
-  const { suggestion, reason } = evaluateProgression(liftId, lastEntry, repRange, targetSets)
+  const { suggestion, reason } = evaluateProgression(lastEntry, repRange, targetSets)
 
   let suggestedWeight_kg = lastWeight
   const increment = getIncrement(liftId)

@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react'
-import { Tag } from '../../components/Tag'
 import { useStorage } from '../../hooks/useStorage'
 import { Button } from '../../components/Button'
 import { HR_ZONES } from '../../types/athlete'

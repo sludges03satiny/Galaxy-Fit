@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { getBenchmarks, saveBenchmark, getAthleteProfile, saveAthleteProfile } from '../../lib/storage'
 import { epley1RM, FRONT_LEVER_LEVEL_LABELS } from '../../types/benchmark'
-import type { BenchmarkResult, FrontLeverLevel } from '../../types/benchmark'
+import type { BenchmarkResult } from '../../types/benchmark'
 import { Button } from '../../components/Button'
 import { Tag } from '../../components/Tag'
 
