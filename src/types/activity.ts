@@ -17,29 +17,28 @@ export type ActivityCategory = 'cardio' | 'mobility' | 'logged-only'
 /**
  * Counting logic (from context doc):
  *   - Any duration: always logged
- *   - 30+ min AND Zone 2+ HR (≥118 BPM) → counts as cardio event
+ *   - 30+ min AND peak BPM ≥ 118 → counts as cardio event
  *   - 60+ min → full outdoor session
- *   - Yoga regardless of HR → counts as mobility session
+ *   - Yoga regardless of BPM → counts as mobility session
  *   - Dog walk / casual stroll → logged, not counted as cardio
  */
 export interface ZActivity {
-  id: string                // UUID
-  date: string              // ISO 8601
+  id: string                   // UUID
+  date: string                 // ISO 8601 date string (YYYY-MM-DD)
   type: ActivityType
   durationMinutes: number
   peakBPM?: number
-  avgBPM?: number
   notes?: string
-  // Derived
-  category: ActivityCategory
+  // Derived fields
   countsAsCardio: boolean
   countsAsMobility: boolean
-  isFullOutdoorSession: boolean  // 60+ min
+  isFullOutdoorSession: boolean // 60+ min
+  category: ActivityCategory
 }
 
 // ─── Counting Logic ───────────────────────────────────────────────────────────
 
-export const ZONE_2_MIN_BPM = 118  // for age 23, max HR ~197
+export const ZONE_2_MIN_BPM = 118 // for age 23, max HR ~197
 
 export function categorizeActivity(
   type: ActivityType,
@@ -124,12 +123,12 @@ export const INTERVAL_LIBRARY: IntervalConfig[] = [
   },
 ]
 
-// ─── Activity Log Summary ─────────────────────────────────────────────────────
+// ─── Activity Summary ─────────────────────────────────────────────────────────
 
 export interface ActivitySummary {
   totalActivities: number
-  cardioEventsThisWeek: number
-  mobilitySessionsThisWeek: number
-  totalMinutesThisWeek: number
+  cardioEventsThisMonth: number
+  mobilitySessionsThisMonth: number
+  avgMinutesPerWeek: number
   lastActivity?: ZActivity
 }
