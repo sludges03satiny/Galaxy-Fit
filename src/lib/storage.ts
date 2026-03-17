@@ -127,6 +127,7 @@ function normalizeAthleteProfile(raw: unknown): AthleteProfile | null {
     weekInBlock: asNumber(blockRaw.weekInBlock) ?? DEFAULT_ATHLETE.blockPosition.weekInBlock,
     phase,
     isDeloadWeek: asBoolean(blockRaw.isDeloadWeek) ?? DEFAULT_ATHLETE.blockPosition.isDeloadWeek,
+    isBenchmarkWeek: asBoolean(blockRaw.isBenchmarkWeek) ?? DEFAULT_ATHLETE.blockPosition.isBenchmarkWeek,
     sessionCount: asNumber(blockRaw.sessionCount) ?? DEFAULT_ATHLETE.blockPosition.sessionCount,
     nextDayType,
   }
@@ -138,6 +139,10 @@ function normalizeAthleteProfile(raw: unknown): AthleteProfile | null {
     balance: asString(activeSkillsRaw.balance) ?? undefined,
     mobility: asString(activeSkillsRaw.mobility) ?? undefined,
   }
+
+  const goalSkills: string[] = Array.isArray(raw.goalSkills)
+    ? raw.goalSkills.filter((g): g is string => typeof g === 'string')
+    : []
 
   const equipment =
     Array.isArray(raw.equipment)
@@ -158,6 +163,7 @@ function normalizeAthleteProfile(raw: unknown): AthleteProfile | null {
     equipment,
     blockPosition,
     activeSkills,
+    goalSkills,
     defaultTimeTier: isTimeTier(raw.defaultTimeTier) ? raw.defaultTimeTier : DEFAULT_ATHLETE.defaultTimeTier,
     vo2maxEstimate: asNumber(raw.vo2maxEstimate) ?? DEFAULT_ATHLETE.vo2maxEstimate,
     customActivityTypes: Array.isArray(raw.customActivityTypes)
