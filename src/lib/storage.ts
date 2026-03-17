@@ -4,9 +4,12 @@
 
 import type { Session } from '../types/session'
 import type { SkillProgress } from '../types/skill'
+import type { NodeStatus } from '../types/skill'
 import type { AthleteProfile } from '../types/athlete'
+import { DEFAULT_ATHLETE, EQUIPMENT_OPTIONS } from '../types/athlete'
 import type { BenchmarkResult } from '../types/benchmark'
 import type { ZActivity } from '../types/activity'
+import { uuid } from './uuid'
 
 // ─── Storage Keys ─────────────────────────────────────────────────────────────
 
@@ -40,6 +43,145 @@ function write<T>(key: string, value: T): void {
   }
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function asString(value: unknown): string | null {
+  return typeof value === 'string' ? value : null
+}
+
+function asNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null
+}
+
+function asBoolean(value: unknown): boolean | null {
+  return typeof value === 'boolean' ? value : null
+}
+
+function normalizeRecord<T>(
+  value: unknown,
+  isValid: (v: unknown) => v is T
+): Record<string, T> {
+  if (!isRecord(value)) return {}
+  const out: Record<string, T> = {}
+  for (const [key, val] of Object.entries(value)) {
+    if (isValid(val)) out[key] = val
+  }
+  return out
+}
+
+function isNodeStatus(value: unknown): value is NodeStatus {
+  return value === 'locked' || value === 'active' || value === 'unlocked'
+}
+
+function isTimeTier(value: unknown): value is AthleteProfile['defaultTimeTier'] {
+  return value === 30 || value === 45 || value === 60 || value === 90
+}
+
+function isSessionLike(value: unknown): value is Session {
+  return isRecord(value) && typeof value.id === 'string' && typeof value.date === 'string'
+}
+
+function isBenchmarkLike(value: unknown): value is BenchmarkResult {
+  return isRecord(value) && typeof value.id === 'string' && typeof value.date === 'string'
+}
+
+function isActivityLike(value: unknown): value is ZActivity {
+  return isRecord(value) && typeof value.id === 'string' && typeof value.date === 'string'
+}
+
+function normalizeSkillProgress(raw: unknown): SkillProgress {
+  if (!isRecord(raw)) return DEFAULT_SKILL_PROGRESS
+  return {
+    nodeStatuses: normalizeRecord(raw.nodeStatuses, isNodeStatus),
+    sessionCounts: normalizeRecord(raw.sessionCounts, (v): v is number => typeof v === 'number' && Number.isFinite(v)),
+    streaks: normalizeRecord(raw.streaks, (v): v is number => typeof v === 'number' && Number.isFinite(v)),
+    lastDemotion: normalizeRecord(raw.lastDemotion, (v): v is string => typeof v === 'string'),
+  }
+}
+
+function normalizeAthleteProfile(raw: unknown): AthleteProfile | null {
+  if (!isRecord(raw)) return null
+
+  const now = new Date().toISOString()
+  const allowedEquipment = new Set<string>(EQUIPMENT_OPTIONS.map(o => o.id))
+
+  const blockRaw = isRecord(raw.blockPosition) ? raw.blockPosition : {}
+  const nextDayType =
+    blockRaw.nextDayType === 'A' || blockRaw.nextDayType === 'B' || blockRaw.nextDayType === 'C'
+      ? blockRaw.nextDayType
+      : DEFAULT_ATHLETE.blockPosition.nextDayType
+
+  const phase =
+    blockRaw.phase === 'accumulation' ||
+    blockRaw.phase === 'deload' ||
+    blockRaw.phase === 'intensification' ||
+    blockRaw.phase === 'realization'
+      ? blockRaw.phase
+      : DEFAULT_ATHLETE.blockPosition.phase
+
+  const blockPosition = {
+    ...DEFAULT_ATHLETE.blockPosition,
+    blockNumber: asNumber(blockRaw.blockNumber) ?? DEFAULT_ATHLETE.blockPosition.blockNumber,
+    weekInBlock: asNumber(blockRaw.weekInBlock) ?? DEFAULT_ATHLETE.blockPosition.weekInBlock,
+    phase,
+    isDeloadWeek: asBoolean(blockRaw.isDeloadWeek) ?? DEFAULT_ATHLETE.blockPosition.isDeloadWeek,
+    isBenchmarkWeek: asBoolean(blockRaw.isBenchmarkWeek) ?? DEFAULT_ATHLETE.blockPosition.isBenchmarkWeek,
+    sessionCount: asNumber(blockRaw.sessionCount) ?? DEFAULT_ATHLETE.blockPosition.sessionCount,
+    nextDayType,
+  }
+
+  const activeSkillsRaw = isRecord(raw.activeSkills) ? raw.activeSkills : {}
+  const activeSkills: AthleteProfile['activeSkills'] = {
+    pulling: asString(activeSkillsRaw.pulling) ?? undefined,
+    pushing: asString(activeSkillsRaw.pushing) ?? undefined,
+    balance: asString(activeSkillsRaw.balance) ?? undefined,
+    mobility: asString(activeSkillsRaw.mobility) ?? undefined,
+  }
+
+  const goalSkills: string[] = Array.isArray(raw.goalSkills)
+    ? raw.goalSkills.filter((g): g is string => typeof g === 'string')
+    : []
+
+  const equipment =
+    Array.isArray(raw.equipment)
+      ? raw.equipment
+          .filter((e): e is string => typeof e === 'string')
+          .filter(e => allowedEquipment.has(e))
+      : DEFAULT_ATHLETE.equipment
+
+  return {
+    ...DEFAULT_ATHLETE,
+    id: asString(raw.id) ?? uuid(),
+    name: asString(raw.name) ?? DEFAULT_ATHLETE.name,
+    avatarEmoji: asString(raw.avatarEmoji) ?? DEFAULT_ATHLETE.avatarEmoji,
+    dateOfBirth: asString(raw.dateOfBirth) ?? DEFAULT_ATHLETE.dateOfBirth,
+    heightCm: asNumber(raw.heightCm) ?? DEFAULT_ATHLETE.heightCm,
+    weightKg: asNumber(raw.weightKg) ?? DEFAULT_ATHLETE.weightKg,
+    units: raw.units === 'metric' || raw.units === 'imperial' ? raw.units : DEFAULT_ATHLETE.units,
+    equipment,
+    blockPosition,
+    activeSkills,
+    goalSkills,
+    defaultTimeTier: isTimeTier(raw.defaultTimeTier) ? raw.defaultTimeTier : DEFAULT_ATHLETE.defaultTimeTier,
+    vo2maxEstimate: asNumber(raw.vo2maxEstimate) ?? DEFAULT_ATHLETE.vo2maxEstimate,
+    customActivityTypes: Array.isArray(raw.customActivityTypes)
+      ? raw.customActivityTypes
+          .filter(isRecord)
+          .map(v => ({
+            id: asString(v.id) ?? '',
+            name: asString(v.name) ?? '',
+            emoji: asString(v.emoji) ?? '',
+          }))
+          .filter(v => v.id && v.name && v.emoji)
+      : DEFAULT_ATHLETE.customActivityTypes,
+    appleWatchEnabled: asBoolean(raw.appleWatchEnabled) ?? DEFAULT_ATHLETE.appleWatchEnabled,
+    createdAt: asString(raw.createdAt) ?? now,
+    updatedAt: asString(raw.updatedAt) ?? now,
+  }
+}
+
 // ─── Sessions ─────────────────────────────────────────────────────────────────
 
 export function saveSession(session: Session): void {
@@ -55,7 +197,8 @@ export function saveSession(session: Session): void {
 }
 
 export function getSessions(): Session[] {
-  return read<Session[]>(KEYS.SESSIONS, [])
+  const raw = read<unknown>(KEYS.SESSIONS, [])
+  return Array.isArray(raw) ? raw.filter(isSessionLike) : []
 }
 
 export function deleteSession(sessionId: string): void {
@@ -88,7 +231,8 @@ export function saveSkillProgress(progress: SkillProgress): void {
 }
 
 export function getSkillProgress(): SkillProgress {
-  return read<SkillProgress>(KEYS.SKILL_PROGRESS, DEFAULT_SKILL_PROGRESS)
+  const raw = read<unknown>(KEYS.SKILL_PROGRESS, DEFAULT_SKILL_PROGRESS)
+  return normalizeSkillProgress(raw)
 }
 
 export function updateSkillNodeStatus(update: Partial<SkillProgress>): void {
@@ -112,7 +256,9 @@ export function saveAthleteProfile(profile: AthleteProfile): void {
 }
 
 export function getAthleteProfile(): AthleteProfile | null {
-  return read<AthleteProfile | null>(KEYS.ATHLETE_PROFILE, null)
+  const raw = read<unknown | null>(KEYS.ATHLETE_PROFILE, null)
+  if (raw === null) return null
+  return normalizeAthleteProfile(raw)
 }
 
 // ─── Benchmarks ───────────────────────────────────────────────────────────────
@@ -131,7 +277,8 @@ export function saveBenchmark(result: BenchmarkResult): void {
 }
 
 export function getBenchmarks(): BenchmarkResult[] {
-  return read<BenchmarkResult[]>(KEYS.BENCHMARKS, [])
+  const raw = read<unknown>(KEYS.BENCHMARKS, [])
+  return Array.isArray(raw) ? raw.filter(isBenchmarkLike) : []
 }
 
 export function getLatestBenchmark(): BenchmarkResult | null {
@@ -159,7 +306,8 @@ export function saveActivity(activity: ZActivity): void {
 }
 
 export function getActivities(): ZActivity[] {
-  return read<ZActivity[]>(KEYS.ACTIVITIES, [])
+  const raw = read<unknown>(KEYS.ACTIVITIES, [])
+  return Array.isArray(raw) ? raw.filter(isActivityLike) : []
 }
 
 export function getActivitiesThisWeek(): ZActivity[] {

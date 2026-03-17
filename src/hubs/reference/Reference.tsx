@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react'
 import { useStorage } from '../../hooks/useStorage'
 import { Button } from '../../components/Button'
-import { HR_ZONES } from '../../types/athlete'
+import { getHRZones } from '../../lib/hrZones'
+import { useAthleteProfile } from '../../hooks/useAthleteProfile'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -332,68 +333,44 @@ const SectionSkillGates: React.FC = () => (
   </div>
 )
 
-const SectionHRZones: React.FC = () => (
-  <div className="space-y-4">
-    <H2>HR ZONES</H2>
-    <Body>
-      Heart rate zones based on estimated maximum HR of 197 BPM (220 − age 23). Your Apple Watch
-      provides real-time HR data; peak BPM is logged manually per session in v1.
-    </Body>
-    <div className="mt-2">
-      {HR_ZONES.map((z) => {
-        const colorMap: Record<number, string> = {
-          1: 'text-blue-400',
-          2: 'text-green-400',
-          3: 'text-yellow-400',
-          4: 'text-orange-400',
-          5: 'text-red-400',
-        }
-        const color = colorMap[z.zone] ?? 'text-text-2'
-        return (
-          <div key={z.zone} className="flex gap-3 items-start border-b border-line py-3 last:border-0">
-            <div className="w-16 flex-shrink-0">
-              <span className={`font-mono text-mono-xs ${color}`}>ZONE {z.zone}</span>
+const SectionHRZones: React.FC = () => {
+  const { profile } = useAthleteProfile()
+  const zones = getHRZones(profile.dateOfBirth)
+
+  return (
+    <div className="space-y-4">
+      <H2>HR ZONES</H2>
+      <Body>
+        Heart rate zones calculated from your date of birth. Max HR: {220 - Math.floor((Date.now() - new Date(profile.dateOfBirth).getTime()) / 31557600000)} BPM.
+      </Body>
+      <div className="mt-2">
+        {zones.map((z) => {
+          const colorMap: Record<number, string> = {
+            1: 'text-blue-400',
+            2: 'text-green-400',
+            3: 'text-yellow-400',
+            4: 'text-orange-400',
+          }
+          const color = colorMap[z.zone] ?? 'text-text-2'
+          return (
+            <div key={z.zone} className="flex gap-3 items-start border-b border-line py-3 last:border-0">
+              <div className="w-16 flex-shrink-0">
+                <span className={`font-mono text-mono-xs ${color}`}>ZONE {z.zone}</span>
+              </div>
+              <div className="w-32 flex-shrink-0">
+                <span className="font-mono text-mono-xs text-text-2">{z.bpmMin}–{z.bpmMax} BPM</span>
+              </div>
+              <div className="flex-1">
+                <span className="font-mono text-mono-xs text-text-2 block">{z.name}</span>
+                <span className="font-body text-xs text-text-3 mt-0.5 block">{z.description}</span>
+              </div>
             </div>
-            <div className="w-32 flex-shrink-0">
-              <span className="font-mono text-mono-xs text-text-2">{z.bpmRange[0]}–{z.bpmRange[1]} BPM</span>
-            </div>
-            <div className="flex-1">
-              <span className="font-mono text-mono-xs text-text-2 block">{z.name}</span>
-              <span className="font-body text-xs text-text-3 mt-0.5 block">{z.description}</span>
-            </div>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
     </div>
-    <H3>HOW ZONES FIT INTO A/B/C</H3>
-    <Body>
-      Day A includes optional short intervals at Zone 3–4 if time permits and readiness is green.
-      Day B always includes a HIIT finisher (8–12 min) targeting Zone 4, providing the primary
-      VO₂max stimulus for the week. Day C has no conditioning — CNS protection after heavy pulling.
-      Z days target Zone 2 (118–148 BPM) for aerobic base development.
-    </Body>
-    <Body>
-      Zone 2 threshold for this athlete: 118 BPM. Any activity 30+ minutes above this threshold
-      counts as a cardio event in the Move hub. Below this threshold — casual walks, warm-ups — is
-      logged but not counted.
-    </Body>
-    <H3>ESTIMATING YOUR MAX HR</H3>
-    <Body>
-      The 220 − age formula is an estimate. Apple Watch's fitness features may surface a higher
-      measured max HR over time. If your Apple Watch reports a reliable VO₂max and resting HR,
-      those values are more accurate than the formula. Use the higher of the two when setting
-      personal zone targets. The zones in this app use 197 BPM as the baseline.
-    </Body>
-    <H3>VO₂MAX AND ZONE 2</H3>
-    <Body>
-      VO₂max is the ceiling of your aerobic capacity — trained through Zone 4 intervals (Day B HIIT
-      finisher, 4×4 Norwegian protocol, 30-30s, 6×1 min). Zone 2 training builds the aerobic floor
-      — the mitochondrial density and fat oxidation efficiency that supports recovery between intense
-      sessions. Both matter. Day B provides the ceiling stimulus. Z days provide the floor volume.
-    </Body>
-    <SourcesFooter />
-  </div>
-)
+  )
+}
 
 const SectionTimeOff: React.FC = () => (
   <div className="space-y-4">

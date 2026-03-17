@@ -10,6 +10,7 @@ import { SessionCard } from '../../components/SessionCard'
 import { SessionWizard } from './SessionWizard'
 import { OnboardingModal } from './OnboardingModal'
 import type { AthleteProfile } from '../../types/athlete'
+import { getSkillProgress, saveSkillProgress } from '../../lib/storage'
 
 const DAY_LABELS: Record<string, string> = {
   A: 'LOWER BODY',
@@ -34,7 +35,17 @@ export const Dashboard: React.FC = () => {
   if (isFirstRun) {
     return (
       <OnboardingModal
-        onComplete={(p: AthleteProfile) => update(p)}
+        onComplete={(p: AthleteProfile, baselineUnlocks: string[]) => {
+          update(p)
+          if (baselineUnlocks.length > 0) {
+            const existing = getSkillProgress()
+            const nodeStatuses = { ...existing.nodeStatuses }
+            for (const id of baselineUnlocks) {
+              nodeStatuses[id] = 'unlocked'
+            }
+            saveSkillProgress({ ...existing, nodeStatuses })
+          }
+        }}
       />
     )
   }

@@ -137,6 +137,98 @@
       "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
     },
     {
+      "id": "ring-support-hold",
+      "name": "Ring Support Hold",
+      "category": "pushing",
+      "description": "Support hold on gymnastics rings with arms locked out and rings turned out (RTO). Conditions wrists, elbows, and stabiliser muscles as the foundation for all ring pushing work.",
+      "prerequisites": [
+        "support-hold"
+      ],
+      "strength_prerequisites": [
+        "10 dips"
+      ],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "hold_seconds": 20,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Ring support hold swings",
+        "False grip hang",
+        "Shoulder depression drills"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "ring support hold RTO turned out rings tutorial",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "ring-dip-negative",
+      "name": "Ring Dip Negative",
+      "category": "pushing",
+      "description": "Controlled slow descent (3\u20135 seconds) from support position to bottom of dip on rings. Builds eccentric strength and joint stability before full ring dips.",
+      "prerequisites": [
+        "ring-support-hold"
+      ],
+      "strength_prerequisites": [
+        "15 dips"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Ring support hold",
+        "Band-assisted ring dip"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "ring dip negative tutorial eccentric rings controlled descent",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "ring-dip",
+      "name": "Ring Dip",
+      "category": "pushing",
+      "description": "Full dip on gymnastics rings with RTO lockout at top. Demands significant stabiliser strength not present in bar dips \u2014 a prerequisite for ring muscle-up.",
+      "prerequisites": [
+        "ring-dip-negative"
+      ],
+      "strength_prerequisites": [
+        "5 ring dip negatives"
+      ],
+      "progression_level": 3,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Ring support hold",
+        "RTO push-ups",
+        "Band-assisted ring dip"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "ring dip tutorial RTO lockout full range gymnastics rings",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
       "id": "hollow-body",
       "name": "Hollow Body Hold",
       "category": "prerequisite",
@@ -311,6 +403,37 @@
         "order": "before_strength"
       },
       "video_reference": "planche lean tutorial straight arm strength wrist conditioning",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
+      "id": "pseudo-planche-push-up",
+      "name": "Pseudo Planche Push-Up",
+      "category": "pushing",
+      "description": "Push-up with hands rotated outward and placed at hip level, shifting weight forward over wrists to simulate a planche lean. Builds wrist, anterior deltoid, and serratus strength needed for tuck planche.",
+      "prerequisites": [
+        "planche-lean"
+      ],
+      "strength_prerequisites": [
+        "20 push-ups"
+      ],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "reps": 8,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Wrist circles and stretches",
+        "Planche lean holds",
+        "Shoulder protraction drills"
+      ],
+      "session_placement": {
+        "day_types": [
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "pseudo planche push up tutorial straight arm planche progression",
       "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
     },
     {
@@ -624,6 +747,37 @@
       "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
     },
     {
+      "id": "ice-cream-maker",
+      "name": "Ice Cream Maker",
+      "category": "pulling",
+      "description": "From a dead hang, pull up while simultaneously moving into a front lever position, then descend back to hang. One of the most demanding horizontal pulling movements \u2014 requires both pulling strength and a solid front lever hold.",
+      "prerequisites": [
+        "front-lever"
+      ],
+      "strength_prerequisites": [
+        "5s front lever hold"
+      ],
+      "progression_level": 5,
+      "unlock_criteria": {
+        "reps": 3,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Front lever holds",
+        "Front lever rows",
+        "Tuck ice cream maker"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "ice cream maker tutorial front lever pull up combination",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
       "id": "tuck-back-lever",
       "name": "Tuck Back Lever",
       "category": "pulling",
@@ -865,13 +1019,44 @@
       "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
     },
     {
+      "id": "typewriter-pull-up",
+      "name": "Typewriter Pull-Up",
+      "category": "pulling",
+      "description": "At the top of a pull-up, slide horizontally from side to side with one arm extending, like a typewriter carriage. Develops unilateral pulling strength and shoulder adduction required for one-arm progressions.",
+      "prerequisites": [
+        "chest-to-bar-pull-up"
+      ],
+      "strength_prerequisites": [
+        "10 chest-to-bar pull-ups"
+      ],
+      "progression_level": 4,
+      "unlock_criteria": {
+        "reps": 3,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Archer pull-ups",
+        "Unilateral lat pull-downs",
+        "Single-arm flex hangs"
+      ],
+      "session_placement": {
+        "day_types": [
+          "C"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "typewriter pull up tutorial unilateral pulling strength",
+      "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
+    },
+    {
       "id": "muscle-up-negative",
       "name": "Muscle-Up Negative",
       "category": "pulling",
       "description": "Slowly lowering from the top dip position down through the transition and into a dead hang. Builds muscle-up-specific pulling and transition strength via eccentric loading.",
       "prerequisites": [
         "chest-to-bar-pull-up",
-        "support-hold"
+        "ring-dip"
       ],
       "strength_prerequisites": [
         "10 strict pull-ups",
@@ -1036,7 +1221,7 @@
       "category": "pushing",
       "description": "Both feet off the ground in a tuck position with arms locked straight and hips at shoulder height. The first true straight-arm planche position.",
       "prerequisites": [
-        "planche-lean",
+        "pseudo-planche-push-up",
         "tuck-l-sit"
       ],
       "strength_prerequisites": [
@@ -1188,12 +1373,44 @@
       "source_credit": "Overcoming Gravity 2nd Edition \u2013 Steven Low"
     },
     {
+      "id": "elevated-pike-push-up",
+      "name": "Elevated Pike Push-Up",
+      "category": "pushing",
+      "description": "Pike push-up with feet elevated on a box or bench, increasing the shoulder angle toward vertical. Bridges the gap between floor pike push-up and wall HSPU.",
+      "prerequisites": [
+        "wall-headstand-push-up"
+      ],
+      "strength_prerequisites": [
+        "10 pike push-ups"
+      ],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "reps": 8,
+        "sets": 4,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Pike push-ups",
+        "Shoulder external rotation",
+        "Wall shoulder taps"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A",
+          "B"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "elevated pike push up tutorial feet on box HSPU progression",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
       "id": "wall-handstand-push-up",
       "name": "Wall Handstand Push-Up",
       "category": "pushing",
       "description": "Full handstand push-up performed with heels against a wall. Develops the overhead vertical pressing strength and range of motion needed for freestanding HSPU.",
       "prerequisites": [
-        "wall-headstand-push-up",
+        "elevated-pike-push-up",
         "wall-handstand"
       ],
       "strength_prerequisites": [
@@ -1281,12 +1498,41 @@
       "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
     },
     {
+      "id": "shrimp-squat",
+      "name": "Shrimp Squat",
+      "category": "mobility",
+      "description": "Single-leg squat where the rear leg is held behind with knee approaching or touching the ground. Develops quad dominance, hip flexor mobility, and balance required for full pistol squat.",
+      "prerequisites": [
+        "cossack-squat"
+      ],
+      "strength_prerequisites": [],
+      "progression_level": 2,
+      "unlock_criteria": {
+        "reps": 5,
+        "sets": 3,
+        "consecutive_sessions": 3
+      },
+      "skill_specific_accessories": [
+        "Cossack squats",
+        "Quad stretches",
+        "Single-leg balance holds"
+      ],
+      "session_placement": {
+        "day_types": [
+          "A"
+        ],
+        "order": "before_strength"
+      },
+      "video_reference": "shrimp squat tutorial single leg quad balance pistol progression",
+      "source_credit": "Bodyweight Fitness Progressions v5.4 \u2013 r/bodyweightfitness"
+    },
+    {
       "id": "assisted-pistol-squat",
       "name": "Assisted Pistol Squat",
       "category": "mobility",
       "description": "Single-leg squat to full depth with band, TRX, or pole for balance assistance. Builds single-leg strength and ankle dorsiflexion range without yet demanding full balance.",
       "prerequisites": [
-        "cossack-squat"
+        "shrimp-squat"
       ],
       "strength_prerequisites": [
         "5 bodyweight squats to parallel"
