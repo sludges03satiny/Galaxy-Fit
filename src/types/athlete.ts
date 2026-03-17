@@ -120,29 +120,42 @@ export interface HRZone {
   description: string
 }
 
-// Max HR ~197 for age 23
-export const HR_ZONES: HRZone[] = [
-  { zone: 1, name: 'Recovery', bpmRange: [0, 118], description: 'Easy movement, active recovery' },
-  { zone: 2, name: 'Aerobic Base', bpmRange: [118, 148], description: 'Sustainable effort, fat oxidation' },
-  { zone: 3, name: 'Threshold', bpmRange: [148, 167], description: 'Comfortably hard, tempo pace' },
-  { zone: 4, name: 'VO₂max', bpmRange: [167, 197], description: 'High intensity intervals' },
-]
+// HR zones are now computed dynamically via src/lib/hrZones.ts
+// Never hardcode BPM values here. Use getHRZones(profile.dateOfBirth).
+
+// ─── Equipment ────────────────────────────────────────────────────────────────
+
+export const EQUIPMENT_OPTIONS = [
+  { id: 'barbell-rack',     label: 'Barbell + Rack',    icon: '🏋️' },
+  { id: 'pull-up-bar',      label: 'Pull-Up Bar',        icon: '🔝' },
+  { id: 'dip-bars-rings',   label: 'Dip Bars / Rings',   icon: '⭕' },
+  { id: 'resistance-bands', label: 'Resistance Bands',   icon: '🔗' },
+  { id: 'dumbbells',        label: 'Dumbbells',          icon: '🏃' },
+  { id: 'kettlebell',       label: 'Kettlebell',         icon: '🔔' },
+  { id: 'gymnastics-rings', label: 'Gymnastics Rings',   icon: '🤸' },
+  { id: 'outdoor-park',     label: 'Outdoor Park',       icon: '🌳' },
+  { id: 'mountain-bike',    label: 'Mountain Bike',      icon: '🚵' },
+  { id: 'treadmill-rower',  label: 'Treadmill / Rower',  icon: '🚣' },
+] as const
+
+export type EquipmentId = typeof EQUIPMENT_OPTIONS[number]['id']
 
 // ─── Athlete Profile ──────────────────────────────────────────────────────────
 
 export interface AthleteProfile {
   // Identity
+  id: string                    // uuid
   name: string
-  birthYear: number
+  avatarEmoji: string           // default: '🏋️'
+  dateOfBirth: string           // ISO date e.g. "2002-08-14"
   heightCm: number
   weightKg?: number
 
-  // Equipment
-  hasGym: boolean
-  hasRings: boolean
-  hasOutdoorBars: boolean
-  hasBands: boolean
-  hasBike: boolean
+  // Units
+  units: 'metric' | 'imperial'
+
+  // Equipment — granular list (replaces boolean flags)
+  equipment: string[]           // IDs from EQUIPMENT_OPTIONS
 
   // Current position in the program
   blockPosition: BlockPosition
@@ -153,8 +166,14 @@ export interface AthleteProfile {
   // Defaults
   defaultTimeTier: TimeTier
 
-  // VO2max (updated on benchmark days from Apple Watch)
+  // VO2max (updated on benchmark days)
   vo2maxEstimate?: number
+
+  // Custom activity types (v2 Move hub)
+  customActivityTypes?: { id: string; name: string; emoji: string }[]
+
+  // Apple Watch integration flag (v2)
+  appleWatchEnabled?: boolean
 
   // Timestamps
   createdAt: string
@@ -162,14 +181,21 @@ export interface AthleteProfile {
 }
 
 export const DEFAULT_ATHLETE: AthleteProfile = {
+  id: 'default',
   name: 'Athlete',
-  birthYear: 2001,
+  avatarEmoji: '🏋️',
+  dateOfBirth: '2002-01-01',
   heightCm: 170,
-  hasGym: true,
-  hasRings: true,
-  hasOutdoorBars: true,
-  hasBands: true,
-  hasBike: true,
+  units: 'metric',
+  equipment: [
+    'barbell-rack',
+    'pull-up-bar',
+    'dip-bars-rings',
+    'resistance-bands',
+    'gymnastics-rings',
+    'outdoor-park',
+    'mountain-bike',
+  ],
   blockPosition: {
     blockNumber: 1,
     weekInBlock: 1,

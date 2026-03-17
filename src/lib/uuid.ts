@@ -1,6 +1,6 @@
 // Simple UUID helper that uses the native browser crypto API.
 // crypto.randomUUID() is available in all modern browsers and Node 14.17+.
-export function uuid(): string {
+export function generateUUID(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID()
   }
@@ -10,3 +10,5 @@ export function uuid(): string {
     return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
   })
 }
+/** @deprecated use generateUUID() */
+export const uuid = generateUUID
