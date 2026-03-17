@@ -5,7 +5,7 @@ import { uuid } from '../../lib/uuid'
 import { Button } from '../../components/Button'
 
 interface Props {
-  onComplete: (profile: AthleteProfile) => void
+  onComplete: (profile: AthleteProfile, baselineUnlocks: string[]) => void
 }
 
 const DAY_OPTIONS = [
@@ -43,6 +43,82 @@ const DEFAULT_EQUIPMENT_SELECTION: EquipmentId[] = [
   'mountain-bike',
 ]
 
+const GOAL_SKILLS = [
+  { id: 'front-lever',            label: 'Front Lever',  emoji: '🏋️', tree: 'PULLING'  },
+  { id: 'planche',                label: 'Planche',      emoji: '🤸', tree: 'PUSHING'  },
+  { id: 'muscle-up',              label: 'Muscle-Up',    emoji: '💪', tree: 'PULLING'  },
+  { id: 'freestanding-handstand', label: 'Handstand',    emoji: '🙆', tree: 'BALANCE'  },
+  { id: 'back-lever',             label: 'Back Lever',   emoji: '⬆️', tree: 'PULLING'  },
+  { id: 'l-sit',                  label: 'L-Sit',        emoji: '🪑', tree: 'PUSHING'  },
+  { id: 'human-flag',             label: 'Human Flag',   emoji: '🚩', tree: 'PULLING'  },
+  { id: 'pistol-squat',           label: 'Pistol Squat', emoji: '🦵', tree: 'MOBILITY' },
+  { id: 'freestanding-hspu',      label: 'HSPU',         emoji: '🙃', tree: 'PUSHING'  },
+  { id: 'dragon-flag',            label: 'Dragon Flag',  emoji: '🐉', tree: 'PUSHING'  },
+  { id: 'nordic-curl',            label: 'Nordic Curl',  emoji: '🦿', tree: 'MOBILITY' },
+] as const
+
+interface BaselineQuestion {
+  id:         string
+  question:   string
+  unlocks:    string[]    // node IDs to mark 'unlocked' when answered YES
+  goalFilter: string[]    // only show question if user selected one of these goals
+}
+
+const BASELINE_QUESTIONS: BaselineQuestion[] = [
+  {
+    id:         'q-dead-hang',
+    question:   'Can you hang from a bar for 30 seconds?',
+    unlocks:    ['dead-hang'],
+    goalFilter: ['front-lever', 'back-lever', 'muscle-up', 'human-flag'],
+  },
+  {
+    id:         'q-pull-ups',
+    question:   'Can you do 5 strict pull-ups?',
+    unlocks:    ['scapular-pull', 'arch-hang'],
+    goalFilter: ['front-lever', 'back-lever', 'muscle-up', 'human-flag'],
+  },
+  {
+    id:         'q-hollow-body',
+    question:   'Can you hold a hollow body position for 20 seconds?',
+    unlocks:    ['hollow-body'],
+    goalFilter: ['planche', 'l-sit', 'freestanding-handstand', 'dragon-flag', 'freestanding-hspu', 'human-flag', 'back-lever', 'muscle-up'],
+  },
+  {
+    id:         'q-push-ups',
+    question:   'Can you do 10 push-ups?',
+    unlocks:    ['support-hold'],
+    goalFilter: ['planche', 'l-sit', 'freestanding-handstand', 'dragon-flag', 'freestanding-hspu', 'human-flag', 'muscle-up'],
+  },
+  {
+    id:         'q-tuck-l-sit',
+    question:   'Can you hold a tuck L-sit for 5 seconds?',
+    unlocks:    ['tuck-l-sit'],
+    goalFilter: ['l-sit', 'planche', 'freestanding-hspu'],
+  },
+  {
+    id:         'q-wall-handstand',
+    question:   'Can you hold a wall handstand for 30 seconds?',
+    unlocks:    ['wall-handstand'],
+    goalFilter: ['freestanding-handstand', 'freestanding-hspu'],
+  },
+  {
+    id:         'q-assisted-pistol',
+    question:   'Can you do an assisted pistol squat (using a band or pole)?',
+    unlocks:    ['cossack-squat', 'shrimp-squat'],
+    goalFilter: ['pistol-squat'],
+  },
+  {
+    id:         'q-nordic-negative',
+    question:   'Can you lower slowly in a Nordic curl (eccentric only)?',
+    unlocks:    ['nordic-curl-negative'],
+    goalFilter: ['nordic-curl'],
+  },
+]
+
+const QUESTION_UNLOCKS: Record<string, string[]> = Object.fromEntries(
+  BASELINE_QUESTIONS.map(q => [q.id, q.unlocks])
+)
+
 function buildDobISO(day: string, month: string, year: string): string | null {
   const d = Number.parseInt(day, 10)
   const m = Number.parseInt(month, 10)
@@ -68,7 +144,7 @@ function buildDobISO(day: string, month: string, year: string): string | null {
 }
 
 export const OnboardingModal: React.FC<Props> = ({ onComplete }) => {
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1)
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7>(1)
 
   // Step 1 — Name
   const [name, setName] = useState('')
@@ -88,7 +164,13 @@ export const OnboardingModal: React.FC<Props> = ({ onComplete }) => {
     return DEFAULT_EQUIPMENT_SELECTION.filter(id => allowed.has(id))
   })
 
-  // Step 5 — Explainer card index
+  // Step 5 — Goal skill selection (1–3 terminal node IDs)
+  const [selectedGoals, setSelectedGoals] = useState<string[]>([])
+
+  // Step 6 — Movement baseline (question ID → true/false)
+  const [baselineAnswers, setBaselineAnswers] = useState<Record<string, boolean>>({})
+
+  // Step 7 — Explainer card index
   const [cardIndex, setCardIndex] = useState(0)
 
   const dobISO = useMemo(() => buildDobISO(dobDay, dobMonth, dobYear), [dobDay, dobMonth, dobYear])
@@ -126,6 +208,23 @@ export const OnboardingModal: React.FC<Props> = ({ onComplete }) => {
     )
   }
 
+  // ── Goal skill helpers ───────────────────────────────────────────────────────
+
+  function toggleGoal(id: string) {
+    setSelectedGoals(prev => {
+      if (prev.includes(id)) return prev.filter(g => g !== id)
+      if (prev.length >= 3) return prev   // max 3
+      return [...prev, id]
+    })
+  }
+
+  // Baseline questions filtered to only those relevant to the user's selected goals
+  const activeBaselineQuestions = useMemo(() =>
+    BASELINE_QUESTIONS.filter(q =>
+      q.goalFilter.some(g => selectedGoals.includes(g))
+    ),
+  [selectedGoals])
+
   // ── Completion ───────────────────────────────────────────────────────────────
 
   const handleComplete = () => {
@@ -139,6 +238,7 @@ export const OnboardingModal: React.FC<Props> = ({ onComplete }) => {
       dateOfBirth: dob,
       units: DEFAULT_ATHLETE.units,
       equipment: selectedEquipment,
+      goalSkills: selectedGoals,
       blockPosition: {
         ...DEFAULT_ATHLETE.blockPosition,
         nextDayType: nextDay,
@@ -146,10 +246,19 @@ export const OnboardingModal: React.FC<Props> = ({ onComplete }) => {
       createdAt: now,
       updatedAt: now,
     }
-    onComplete(profile)
+
+    // Collect node IDs to pre-unlock from baseline answers
+    const baselineUnlocks: string[] = []
+    for (const [qId, answered] of Object.entries(baselineAnswers)) {
+      if (answered) {
+        baselineUnlocks.push(...(QUESTION_UNLOCKS[qId] ?? []))
+      }
+    }
+
+    onComplete(profile, baselineUnlocks)
   }
 
-  const totalSteps = 5
+  const totalSteps = 7
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-bg">
@@ -404,8 +513,129 @@ export const OnboardingModal: React.FC<Props> = ({ onComplete }) => {
             </div>
           )}
 
-          {/* ── Step 5: Explainer cards ── */}
+          {/* ── Step 5: Goal Skills ── */}
           {step === 5 && (
+            <div className="space-y-6 animate-fade-up">
+              <div>
+                <h1 className="font-heading text-display-md text-text leading-none">WHAT DO YOU WANT TO ACHIEVE?</h1>
+                <p className="font-body text-sm text-text-3 mt-2">
+                  Pick 1–3 goals. Your skill tree shows only the paths you're working toward.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3" role="group" aria-label="Goal skill selection">
+                {GOAL_SKILLS.map(goal => {
+                  const checked = selectedGoals.includes(goal.id)
+                  const maxReached = selectedGoals.length >= 3 && !checked
+                  return (
+                    <button
+                      key={goal.id}
+                      type="button"
+                      onClick={() => toggleGoal(goal.id)}
+                      aria-pressed={checked}
+                      disabled={maxReached}
+                      className={[
+                        'flex flex-col gap-1 p-3 rounded border text-left transition-all',
+                        checked
+                          ? 'border-lime bg-accent-dim'
+                          : maxReached
+                            ? 'border-line bg-bg-2 opacity-40 cursor-not-allowed'
+                            : 'border-line bg-bg-2 hover:border-line-2',
+                      ].join(' ')}
+                    >
+                      <span className="text-xl">{goal.emoji}</span>
+                      <span className={`font-body text-sm ${checked ? 'text-text' : 'text-text-2'}`}>{goal.label}</span>
+                      <span className="font-mono text-mono-xs text-text-3">{goal.tree}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {selectedGoals.length >= 3 && (
+                <p className="font-mono text-mono-xs text-text-3 text-center">
+                  Deselect a goal to choose a different one.
+                </p>
+              )}
+
+              <div className="flex gap-2">
+                <Button variant="ghost" size="lg" onClick={() => setStep(4)}>← Back</Button>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                  onClick={() => setStep(6)}
+                  disabled={selectedGoals.length === 0}
+                >
+                  Next →
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* ── Step 6: Movement Baseline ── */}
+          {step === 6 && (
+            <div className="space-y-6 animate-fade-up">
+              <div>
+                <h1 className="font-heading text-display-md text-text leading-none">WHERE ARE YOU STARTING?</h1>
+                <p className="font-body text-sm text-text-3 mt-2">
+                  These answers skip you past skills you already have. Be honest.
+                </p>
+              </div>
+
+              {activeBaselineQuestions.length === 0 ? (
+                <div className="bg-bg-2 border border-line rounded p-4">
+                  <p className="font-body text-sm text-text-2">
+                    Your goals build from the ground up — you'll start at the foundations.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {activeBaselineQuestions.map(q => {
+                    const answer = baselineAnswers[q.id]
+                    return (
+                      <div key={q.id} className="bg-bg-2 border border-line rounded p-4">
+                        <p className="font-body text-sm text-text mb-3">{q.question}</p>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setBaselineAnswers(prev => ({ ...prev, [q.id]: true }))}
+                            className={[
+                              'flex-1 py-2 rounded border font-mono text-mono-xs tracking-widest transition-all',
+                              answer === true
+                                ? 'border-lime bg-accent-dim text-lime'
+                                : 'border-line bg-bg-3 text-text-3 hover:border-line-2',
+                            ].join(' ')}
+                          >
+                            YES
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setBaselineAnswers(prev => ({ ...prev, [q.id]: false }))}
+                            className={[
+                              'flex-1 py-2 rounded border font-mono text-mono-xs tracking-widest transition-all',
+                              answer === false
+                                ? 'border-red bg-bg-3 text-red'
+                                : 'border-line bg-bg-3 text-text-3 hover:border-line-2',
+                            ].join(' ')}
+                          >
+                            NO
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <Button variant="ghost" size="lg" onClick={() => setStep(5)}>← Back</Button>
+                <Button variant="primary" size="lg" fullWidth onClick={() => setStep(7)}>Next →</Button>
+              </div>
+            </div>
+          )}
+
+          {/* ── Step 7: Explainer cards ── */}
+          {step === 7 && (
             <div className="space-y-6 animate-fade-up">
               <div className="flex items-start justify-between">
                 <h1 className="font-heading text-display-md text-text leading-none">ONE MORE THING</h1>
@@ -451,7 +681,7 @@ export const OnboardingModal: React.FC<Props> = ({ onComplete }) => {
                 {cardIndex > 0 ? (
                   <Button variant="ghost" size="lg" onClick={() => setCardIndex(prev => prev - 1)}>← Back</Button>
                 ) : (
-                  <Button variant="ghost" size="lg" onClick={() => setStep(4)}>← Back</Button>
+                  <Button variant="ghost" size="lg" onClick={() => setStep(6)}>← Back</Button>
                 )}
 
                 {cardIndex < EXPLAINER_CARDS.length - 1 ? (

@@ -57,6 +57,7 @@ export interface BlockPosition {
   weekInBlock: number       // 1–12
   phase: BlockPhase
   isDeloadWeek: boolean
+  isBenchmarkWeek: boolean  // true during week 1 of block 1 (first-run benchmark battery)
   sessionCount: number      // sessions completed this block
   // Rolling A/B/C sequence — what comes next
   nextDayType: 'A' | 'B' | 'C'
@@ -163,6 +164,9 @@ export interface AthleteProfile {
   // Skill selections (one per tree)
   activeSkills: ActiveSkillSelection
 
+  // Goal skills selected during onboarding (terminal node IDs)
+  goalSkills: string[]
+
   // Defaults
   defaultTimeTier: TimeTier
 
@@ -201,10 +205,12 @@ export const DEFAULT_ATHLETE: AthleteProfile = {
     weekInBlock: 1,
     phase: 'accumulation',
     isDeloadWeek: false,
+    isBenchmarkWeek: false,
     sessionCount: 0,
     nextDayType: 'A',
   },
   activeSkills: {},
+  goalSkills: [],
   defaultTimeTier: 60,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
